@@ -1,6 +1,7 @@
 import mysql, {ResultSetHeader, RowDataPacket} from "mysql2";
 import { v4 as uuidv4 } from 'uuid';
 
+import linkedTransaction from "@utils/interfaces/linkedTransaction";
 import Transaction from "@utils/interfaces/transaction";
 import Carte from "@utils/interfaces/carte";
 
@@ -13,7 +14,7 @@ export default class Db {
         this.conn =  mysql.createConnection({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
+            password: process.env.DB_PASS,
             database: process.env.DB_NAME
         });
     }
@@ -72,6 +73,30 @@ export default class Db {
         });
     }
 
+    public getLinkedCardTransactions(idCarte : string): Promise<linkedTransaction[]> {
+        return new Promise((resolve, reject) => {
+            this.conn.query<RowDataPacket[]>("SELECT transaction.id, identifiant, transaction.date, transaction.montant, transaction.carte_id FROM transaction INNER JOIN membre ON membre.id = transaction.id  WHERE  transaction.carte_id = ?", [idCarte], (err, results) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                const transactions: linkedTransaction[] = [];
+
+                for (const row of results) {
+                    transactions.push({
+                        id: row.id,
+                        identifiant: row.identifiant,
+                        date: row.date,
+                        montant: row.montant,
+                        carte_id: row.carte_id
+                    });
+                }
+
+                resolve(transactions);
+            });
+        });
+    }
+
     public getMemberTransactions(memberId : number): Promise<Transaction[]> {
         return new Promise((resolve, reject) => {
             this.conn.query<RowDataPacket[]>("SELECT * FROM transaction WHERE membre_id = ?", [memberId], (err, results) => {
@@ -96,13 +121,13 @@ export default class Db {
         });
     }
 
-    public addCard(prenom: string, nom: string, solde: number): Promise<Carte> {
+    public addCard(prenom: string, nom: string): Promise<Carte> {
 
         const id = uuidv4();
         const now = new Date();
 
         return new Promise((resolve, reject) => {
-            this.conn.query<ResultSetHeader>("INSERT INTO carte (id, prenom, nom, date_creation, solde) VALUES (?, ?, ?, ?, ?)", [id, prenom, nom, now, solde], (err, results) => {
+            this.conn.query<ResultSetHeader>("INSERT INTO carte (id, prenom, nom, date_creation, solde) VALUES (?, ?, ?, ?, ?)", [id, prenom, nom, now, 0], (err, results) => {
                 if (err) {
                     return reject(err);
                 }
@@ -112,7 +137,7 @@ export default class Db {
                     prenom: prenom,
                     nom: nom,
                     date_creation: now,
-                    solde: solde
+                    solde: 0
                 });
             });
         });
@@ -137,6 +162,30 @@ export default class Db {
                         solde: row.solde
                     });
                 }
+            });
+        });
+    }
+
+    public getCards(): Promise<Carte[]> {
+        return new Promise((resolve, reject) => {
+            this.conn.query<RowDataPacket[]>("SELECT * FROM carte", (err, results) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                const cartes: Carte[] = [];
+
+                for (const row of results) {
+                    cartes.push({
+                        id: row.id,
+                        prenom: row.prenom,
+                        nom: row.nom,
+                        date_creation: row.date_creation,
+                        solde: row.solde
+                    });
+                }
+
+                resolve(cartes);
             });
         });
     }
