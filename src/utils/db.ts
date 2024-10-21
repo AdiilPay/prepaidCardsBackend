@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import linkedTransaction from "@utils/interfaces/linkedTransaction";
 import Transaction from "@utils/interfaces/transaction";
 import Carte from "@utils/interfaces/carte";
+import Membre from "@utils/interfaces/membre";
 
 export default class Db {
 
@@ -26,6 +27,8 @@ export default class Db {
 
         return Db.instance;
     }
+
+    // Transactions :
 
     public addTransaction(memberId : number, montant : number, idCarte : string): Promise<Transaction> {
 
@@ -121,6 +124,8 @@ export default class Db {
         });
     }
 
+    // Cards :
+
     public addCard(prenom: string, nom: string): Promise<Carte> {
 
         const id = uuidv4();
@@ -190,6 +195,46 @@ export default class Db {
         });
     }
 
+    public addMember(identifiant: string, password: string): Promise<Membre> {
+
+        return new Promise((resolve, reject) => {
+            this.conn.query<ResultSetHeader>("INSERT INTO membre (identifiant, password) VALUES (?, ?)", [identifiant, password], (err, results) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                resolve({
+                    id: results.insertId,
+                    identifiant: identifiant,
+                    password: password
+                });
+            });
+        });
+
+
+    }
+
+    public getMember(identifiant: string): Promise<Membre> {
+        return new Promise((resolve, reject) => {
+            this.conn.query<RowDataPacket[]>("SELECT * FROM membre WHERE identifiant = ?", [identifiant], (err, results) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                if (results.length === 0) {
+                    return reject(new Error("Member not found"));
+                } else {
+                    const row = results[0];
+                    resolve({
+                        id: row.id,
+                        identifiant: row.identifiant,
+                        password: row.password
+                    });
+                }
+            });
+        });
+    }
+
     public query(sql: string, values: any[] = []): Promise<any> {
         return new Promise((resolve, reject) => {
             this.conn.query(sql, values, (err, results) => {
@@ -201,6 +246,8 @@ export default class Db {
             });
         });
     }
+
 }
+
 
 

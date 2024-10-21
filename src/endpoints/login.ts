@@ -1,31 +1,37 @@
 import {Request, Response, Router} from "express";
-import authenticate from "@utils/auth/authenticate";
 import jwt from "jsonwebtoken";
 import process from "node:process";
 import bcrypt from 'bcryptjs';
+import Db from "@utils/db";
 
 const router = Router();
 
 router.get('/login', (req: Request, res: Response) => {
 
-    const { login, password } = req.body;
+    const {login, password} = req.body;
 
+    // Recherche de l'utilisateur dans la base de données
 
-    // if (!user) {
-    //    res.status(400).json({ message: 'Email ou mot de passe incorrect' });
-    // }
+    Db.getInstance().getMember(login).then((user) => {
+        if (!user) {
+            res.status(400).json({message: 'Email ou mot de passe incorrect'});
+        }
 
-    //const isPasswordValid = bcrypt.compare(password, user.password);
-    const isPasswordValid = true;
+        bcrypt.compare(password, user.password!).then((valid) => {
 
-    if (!isPasswordValid) {
-        res.status(400).json({ message: 'Email ou mot de passe incorrect' });
-    }
+            if (!valid) {
+                res.status(400).json({message: 'Email ou mot de passe incorrect'});
+            } else {
 
-    // Création d'un token JWT avec une durée d'expiration
-    const token = jwt.sign({ email: login }, process.env.SECRET_KEY as string, { expiresIn: '1h' });
+                // Création d'un token JWT avec une durée d'expiration
+                const token = jwt.sign({login: user.identifiant, id: user.id}, process.env.SECRET_KEY as string, {expiresIn: '1h'});
 
-    res.json({ token });
+                res.json({token});
+            }
+        })
+    }).catch((err) => {
+        res.status(400).json({message: 'Email ou mot de passe incorrect'});
+    });
 });
 
 
