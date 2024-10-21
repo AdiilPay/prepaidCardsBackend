@@ -1,18 +1,19 @@
-// src/index.ts
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
-import test from "@utils/test";
+import express from 'express';
+
+import dotenv from 'dotenv';
+import loadRoutes from "@utils/loadRoutes";
 
 dotenv.config();
 
-const app: Express = express();
-const port = process.env.PORT || 3000;
+const app = express();
 
-app.get("/", (req: Request, res: Response) => {
+app.use(express.json());
 
-    res.send("Express + TypeScript Server" + test());
-});
+// On charge dynamiquement toutes les endpoints
+loadRoutes(app);
 
-app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
+// Démarrer le serveur
+const PORT = process.env.PORT;
+app.listen(PORT, () => {
+    console.log(`Serveur en cours d'exécution sur http://localhost:${PORT}`);
 });
