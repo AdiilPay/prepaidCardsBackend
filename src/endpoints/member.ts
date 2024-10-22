@@ -28,39 +28,4 @@ router.get('/members/:userId', authenticate, (req: Request, res: Response) => {
     })
 });
 
-// Pas d'authentification pour cette route
-// => Permets d'avoir l'historique des achats directement en scannant sa carte
-router.get('/transactions/:cardId', (req: Request, res: Response) => {
-
-    Db.getInstance().getCardTransactions(req.params.cardId).then((transactions) => {
-        res.send(transactions);
-    });
-});
-
-router.post('/transactions/:cardId', authenticate, (req: Request, res: Response) => {
-    const parsedBody = transactionSchema.safeParse(req.body);
-    if (!parsedBody.success) {res.status(400).send(parsedBody.error);return}
-
-    Db.getInstance().getCard(req.params.cardId).then((card) => {
-        if (!card) {
-            res.status(404).send({message: 'Carte non trouvée'});
-        } else if ((card.solde + req.body.amount < 0 ) && (req.body.amount < 0)) {
-            res.status(400).send({message: 'Solde insuffisant'});
-        } else {
-            Db.getInstance().addTransaction(
-                // @ts-ignore
-                req.user.id,
-                req.body.amount, req.params.cardId).then((transaction) => {
-                Db.getInstance().getCard(req.params.cardId).then((card) => {
-                    res.send({
-                        transaction: transaction,
-                        card: card
-                    });
-                });
-            });
-        }
-    });
-
-});
-
 export default router;
