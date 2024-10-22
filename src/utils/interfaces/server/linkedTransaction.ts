@@ -1,7 +1,7 @@
 export default interface Transaction {
 
     id : number;
-    identifiant : string;
+    login : string;
     date : Date;
     montant : number;
     carte_id : string;

@@ -1,7 +1,7 @@
 export default interface Membre {
 
     id: number;
-    identifiant: string;
+    login: string;
     password?: string;
 
 }

@@ -52,9 +52,9 @@ export default class Db {
 
     }
 
-    public getCardTransactions(idCarte : string): Promise<Transaction[]> {
+    public getTransactions() : Promise<Transaction[]> {
         return new Promise((resolve, reject) => {
-            this.conn.query<RowDataPacket[]>("SELECT * FROM transaction WHERE carte_id = ?", [idCarte], (err, results) => {
+            this.conn.query<RowDataPacket[]>("SELECT * FROM transaction", (err, results) => {
                 if (err) {
                     return reject(err);
                 }
@@ -66,7 +66,7 @@ export default class Db {
                         id: row.id,
                         membre_id: row.membre_id,
                         date: row.date,
-                        montant: Number(row.montant),
+                        montant: row.montant,
                         carte_id: row.carte_id
                     });
                 }
@@ -76,9 +76,9 @@ export default class Db {
         });
     }
 
-    public getLinkedCardTransactions(idCarte : string): Promise<linkedTransaction[]> {
+    public getCardTransactions(idCarte : string): Promise<linkedTransaction[]> {
         return new Promise((resolve, reject) => {
-            this.conn.query<RowDataPacket[]>("SELECT transaction.id, identifiant, transaction.date, transaction.montant, transaction.carte_id FROM transaction INNER JOIN membre ON membre.id = transaction.membre_id  WHERE  transaction.carte_id = ?", [idCarte], (err, results) => {
+            this.conn.query<RowDataPacket[]>("SELECT transaction.id, login, transaction.date, transaction.montant, transaction.carte_id FROM transaction INNER JOIN membre ON membre.id = transaction.membre_id  WHERE  transaction.carte_id = ?", [idCarte], (err, results) => {
                 if (err) {
                     return reject(err);
                 }
@@ -88,7 +88,7 @@ export default class Db {
                 for (const row of results) {
                     transactions.push({
                         id: row.id,
-                        identifiant: row.identifiant,
+                        login: row.login,
                         date: row.date,
                         montant: Number(row.montant),
                         carte_id: row.carte_id
@@ -195,17 +195,17 @@ export default class Db {
         });
     }
 
-    public addMember(identifiant: string, password: string): Promise<Membre> {
+    public addMember(login: string, password: string): Promise<Membre> {
 
         return new Promise((resolve, reject) => {
-            this.conn.query<ResultSetHeader>("INSERT INTO membre (identifiant, password) VALUES (?, ?)", [identifiant, password], (err, results) => {
+            this.conn.query<ResultSetHeader>("INSERT INTO membre (login, password) VALUES (?, ?)", [login, password], (err, results) => {
                 if (err) {
                     return reject(err);
                 }
 
                 resolve({
                     id: results.insertId,
-                    identifiant: identifiant,
+                    login: login,
                     password: password
                 });
             });
@@ -214,9 +214,9 @@ export default class Db {
 
     }
 
-    public getMember(identifiant: string): Promise<Membre> {
+    public getMember(login: string): Promise<Membre> {
         return new Promise((resolve, reject) => {
-            this.conn.query<RowDataPacket[]>("SELECT * FROM membre WHERE identifiant = ?", [identifiant], (err, results) => {
+            this.conn.query<RowDataPacket[]>("SELECT * FROM membre WHERE login = ?", [login], (err, results) => {
                 if (err) {
                     return reject(err);
                 }
@@ -227,7 +227,7 @@ export default class Db {
                     const row = results[0];
                     resolve({
                         id: row.id,
-                        identifiant: row.identifiant,
+                        login: row.login,
                         password: row.password
                     });
                 }
@@ -235,7 +235,26 @@ export default class Db {
         });
     }
 
+    public getMemberById(id: number): Promise<Membre> {
+        return new Promise((resolve, reject) => {
+            this.conn.query<RowDataPacket[]>("SELECT * FROM membre WHERE id = ?", [id], (err, results) => {
+                if (err) {
+                    return reject(err);
+                }
 
+                if (results.length === 0) {
+                    return reject(new Error("Member not found"));
+                } else {
+                    const row = results[0];
+                    resolve({
+                        id: row.id,
+                        login: row.login,
+                        password: row.password
+                    });
+                }
+            });
+        });
+    }
 }
 
 
