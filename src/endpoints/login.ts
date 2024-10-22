@@ -6,7 +6,7 @@ import Db from "@utils/db";
 
 const router = Router();
 
-router.get('/login', (req: Request, res: Response) => {
+router.post('/login', (req: Request, res: Response) => {
 
     const {login, password} = req.body;
 
