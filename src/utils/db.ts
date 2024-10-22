@@ -78,7 +78,7 @@ export default class Db {
 
     public getLinkedCardTransactions(idCarte : string): Promise<linkedTransaction[]> {
         return new Promise((resolve, reject) => {
-            this.conn.query<RowDataPacket[]>("SELECT transaction.id, identifiant, transaction.date, transaction.montant, transaction.carte_id FROM transaction INNER JOIN membre ON membre.id = transaction.id  WHERE  transaction.carte_id = ?", [idCarte], (err, results) => {
+            this.conn.query<RowDataPacket[]>("SELECT transaction.id, identifiant, transaction.date, transaction.montant, transaction.carte_id FROM transaction INNER JOIN membre ON membre.id = transaction.membre_id  WHERE  transaction.carte_id = ?", [idCarte], (err, results) => {
                 if (err) {
                     return reject(err);
                 }
