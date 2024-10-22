@@ -2,7 +2,6 @@ import {NextFunction, request, Request, Response} from 'express';
 import jwt, {JwtPayload} from 'jsonwebtoken';
 import * as process from "node:process";
 
-
 export default (req: Request, res: Response, next: NextFunction): void => {
     const authHeader = req.headers['authorization'];
 

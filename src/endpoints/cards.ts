@@ -12,17 +12,17 @@ router.get('/cards', authenticate, (req: Request, res: Response) => {
 });
 
 
-router.get('/cards/:id', authenticate, (req: Request, res: Response) => {
+router.post('/cards', authenticate, (req: Request, res: Response) => {
 
-    Db.getInstance().getCard(req.params.id).then((card) => {
+    Db.getInstance().addCard(req.body.prenom, req.body.nom).then((card) => {
         res.send(card);
     });
 });
 
 
-router.post('/cards', authenticate, (req: Request, res: Response) => {
+router.get('/cards/:id', authenticate, (req: Request, res: Response) => {
 
-    Db.getInstance().addCard(req.body.prenom, req.body.nom).then((card) => {
+    Db.getInstance().getCard(req.params.id).then((card) => {
         res.send(card);
     });
 });
