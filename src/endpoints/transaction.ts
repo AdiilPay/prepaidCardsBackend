@@ -19,9 +19,12 @@ router.get('/transactions/:cardId', authenticate, (req: Request, res: Response) 
     });
 });
 
-router.post('/transactions', authenticate, (req: Request, res: Response) => {
+router.post('/transactions/:cardId', authenticate, (req: Request, res: Response) => {
 
-    Db.getInstance().addTransaction(req.body.memberId, req.body.amount, req.body.cardId).then((transaction) => {
+    Db.getInstance().addTransaction(
+        // @ts-ignore
+        req.user.id,
+        req.body.amount, req.params.cardId).then((transaction) => {
         res.send(transaction);
     });
 });
