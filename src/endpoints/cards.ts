@@ -19,8 +19,9 @@ router.post('/cards', authenticate, (req: Request, res: Response) => {
     });
 });
 
-
-router.get('/cards/:id', authenticate, (req: Request, res: Response) => {
+// Pas d'authentification pour cette route
+// => Permets d'avoir les infos directement en scannant sa carte
+router.get('/cards/:id', (req: Request, res: Response) => {
 
     Db.getInstance().getCard(req.params.id).then((card) => {
         res.send(card);

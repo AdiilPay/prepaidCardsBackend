@@ -1,10 +1,10 @@
 import mysql, {ResultSetHeader, RowDataPacket} from "mysql2";
 import { v4 as uuidv4 } from 'uuid';
 
-import linkedTransaction from "@utils/interfaces/linkedTransaction";
-import Transaction from "@utils/interfaces/transaction";
-import Carte from "@utils/interfaces/carte";
-import Membre from "@utils/interfaces/membre";
+import linkedTransaction from "@utils/interfaces/server/linkedTransaction";
+import Transaction from "@utils/interfaces/server/transaction";
+import Carte from "@utils/interfaces/server/carte";
+import Membre from "@utils/interfaces/server/membre";
 
 export default class Db {
 
@@ -28,7 +28,7 @@ export default class Db {
         return Db.instance;
     }
 
-    // Transactions :
+    // Transactions:
 
     public addTransaction(memberId : number, montant : number, idCarte : string): Promise<Transaction> {
 
@@ -66,7 +66,7 @@ export default class Db {
                         id: row.id,
                         membre_id: row.membre_id,
                         date: row.date,
-                        montant: row.montant,
+                        montant: Number(row.montant),
                         carte_id: row.carte_id
                     });
                 }
@@ -90,7 +90,7 @@ export default class Db {
                         id: row.id,
                         identifiant: row.identifiant,
                         date: row.date,
-                        montant: row.montant,
+                        montant: Number(row.montant),
                         carte_id: row.carte_id
                     });
                 }
@@ -142,7 +142,7 @@ export default class Db {
                     prenom: prenom,
                     nom: nom,
                     date_creation: now,
-                    solde: 0
+                    solde: 0,
                 });
             });
         });
@@ -164,7 +164,7 @@ export default class Db {
                         prenom: row.prenom,
                         nom: row.nom,
                         date_creation: row.date_creation,
-                        solde: row.solde
+                        solde: Number(row.solde),
                     });
                 }
             });
@@ -186,7 +186,7 @@ export default class Db {
                         prenom: row.prenom,
                         nom: row.nom,
                         date_creation: row.date_creation,
-                        solde: row.solde
+                        solde: Number(row.solde)
                     });
                 }
 
@@ -235,17 +235,6 @@ export default class Db {
         });
     }
 
-    public query(sql: string, values: any[] = []): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.conn.query(sql, values, (err, results) => {
-                if (err) {
-                    return reject(err);
-                }
-
-                resolve(results);
-            });
-        });
-    }
 
 }
 
