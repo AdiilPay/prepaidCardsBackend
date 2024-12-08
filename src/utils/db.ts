@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import linkedTransaction from "@utils/interfaces/server/linkedTransaction";
 import Transaction from "@utils/interfaces/server/transaction";
 import Carte from "@utils/interfaces/server/carte";
-import Agent from "@utils/interfaces/agent";
+import Agent from "@utils/interfaces/server/agent";
 
 export default class Db {
 
@@ -195,7 +195,7 @@ export default class Db {
         });
     }
 
-    public async addMember(login: string, password: string): Promise<Membre> {
+    public async addMember(login: string, password: string): Promise<Agent> {
 
         return new Promise((resolve, reject) => {
             this.conn.query<ResultSetHeader>("INSERT INTO membre (login, password) VALUES (?, ?)", [login, password], (err, results) => {
@@ -214,7 +214,7 @@ export default class Db {
 
     }
 
-    public async getMember(login: string): Promise<Membre> {
+    public async getMember(login: string): Promise<Agent> {
         return new Promise((resolve, reject) => {
             this.conn.query<RowDataPacket[]>("SELECT * FROM membre WHERE login = ?", [login], (err, results) => {
                 if (err) {
@@ -235,7 +235,7 @@ export default class Db {
         });
     }
 
-    public async getMemberById(id: number): Promise<Membre> {
+    public async getMemberById(id: number): Promise<Agent> {
         return new Promise((resolve, reject) => {
             this.conn.query<RowDataPacket[]>("SELECT * FROM membre WHERE id = ?", [id], (err, results) => {
                 if (err) {
