@@ -12,11 +12,9 @@ router.post('/register', authenticate, (req: Request, res: Response) => {
 
    bcrypt.hash(password, 10).then((hash) => {
 
-       Db.getInstance().addMember(login, hash).then((user) => {
-           // On renvoie l'utilisateur créé, en supprimant le mot de passe
-           delete user.password;
+       Db.getInstance().addAgent(login, hash).then((agent) => {
 
-           res.send(user);
+           res.send({id: agent.id, login: agent.login});
        });
     });
 });
