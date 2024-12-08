@@ -1,39 +1,40 @@
 import {Request, Response, Router} from "express";
 import jwt from "jsonwebtoken";
 import process from "node:process";
+import bcrypt from 'bcryptjs';
 import Db from "@utils/db";
-import "@utils/auth/passwords";
-import {compare} from "@utils/auth/passwords";
+import loginSchema from "@utils/interfaces/client/login";
 
 const router = Router();
 
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', (req: Request, res: Response) => {
+    const parsedBody = loginSchema.safeParse(req.body);
+    if (!parsedBody.success) {res.status(400).send(parsedBody.error);return;}
 
-    let {login, password} = req.body;
+    const {login, password} = req.body;
 
-    if (!login || !password) {
-        res.status(400).json({message: 'Veuillez renseigner un email et un mot de passe'});
-    }
+    // Recherche de l'utilisateur dans la base de données
 
-    Db.getInstance().getAgent(login).then((agent) => {
-
-        if (!agent) {
-            res.status(400).json({message: 'Email !!!! ou mot de passe incorrect'});
-            return;
+    Db.getInstance().getMember(login).then((user) => {
+        if (!user) {
+            res.status(400).json({message: 'mail ou mot de passe incorrect'});
         }
-        compare(password, agent.password).then((passwordOK) => {
-            if (!passwordOK) {
-                res.status(400).json({message: 'Email ou mot de passe incorrect : '  + passwordOK});
-                return;
+
+        bcrypt.compare(password, user.password!).then((valid) => {
+
+            if (!valid) {
+                res.status(400).json({message: 'login ou mot de passe incorrect'});
+            } else {
+
+                // Création d'un token JWT avec une durée d'expiration
+                const token = jwt.sign({login: user.login, id: user.id}, process.env.SECRET_KEY as string, {expiresIn: '1h'});
+
+                res.json({token});
             }
-
-            // Création d'un token JWT avec une durée d'expiration de 12h
-            const token = jwt.sign({login: agent.login, id: agent.id}, process.env.SECRET_KEY as string, {expiresIn: '12h'});
-            res.json({token});
-        });
-
+        })
     }).catch((err) => {
-        res.status(400).json({message: err});
+        console.log(err)
+        res.status(400).json({message: 'Email ou mot de passe incorrect'});
     });
 });
 
