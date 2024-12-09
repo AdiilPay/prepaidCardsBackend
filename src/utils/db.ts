@@ -30,19 +30,18 @@ export default class Db {
 
     // Transactions:
 
-    public async addTransaction(memberId : number, montant : number, idCarte : string): Promise<Transaction> {
-
+    public async addTransaction(agentId : number, montant : number, idCarte : string, descr: string = ""): Promise<Transaction> {
         const now = new Date();
 
         return new Promise((resolve, reject) => {
-            this.conn.query<ResultSetHeader>("INSERT INTO transaction (membre_id, date, montant, carte_id) VALUES (?, ?, ?, ?)", [memberId, now, montant, idCarte], (err, results) => {
+            this.conn.query<ResultSetHeader>("INSERT INTO transaction (agent_id, date, montant, carte_id, description) VALUES (?, ?, ?, ?, ?)", [agentId, now, montant, idCarte, descr], (err, results) => {
                 if (err) {
                     return reject(err);
                 }
 
                 resolve({
                     id: results.insertId,
-                    membre_id: memberId,
+                    membre_id: agentId,
                     date: now,
                     montant: montant,
                     carte_id: idCarte
@@ -54,7 +53,7 @@ export default class Db {
 
     public async getTransactions(): Promise<Transaction[]> {
         return new Promise((resolve, reject) => {
-            this.conn.query<RowDataPacket[]>("SELECT * FROM transaction", (err, results) => {
+            this.conn.query<RowDataPacket[]>("SELECT * FROM transaction INNER JOIN carte ON transaction.carte_id = carte.id INNER JOIN profile AS p ON p.id = carte.profil_id ", (err, results) => {
                 if (err) {
                     return reject(err);
                 }
@@ -64,7 +63,8 @@ export default class Db {
                 for (const row of results) {
                     transactions.push({
                         id: row.id,
-                        membre_id: row.membre_id,
+                        profileId: row.profil_id,
+                        cardId: row.carte_id,
                         date: row.date,
                         montant: row.montant,
                         carte_id: row.carte_id
@@ -100,9 +100,9 @@ export default class Db {
         });
     }
 
-    public async getAgentTransactions(memberId : number): Promise<Transaction[]> {
+    public async getAgentTransactions(agentId : number): Promise<Transaction[]> {
         return new Promise((resolve, reject) => {
-            this.conn.query<RowDataPacket[]>("SELECT * FROM transaction WHERE membre_id = ?", [memberId], (err, results) => {
+            this.conn.query<RowDataPacket[]>("SELECT * FROM transaction WHERE membre_id = ?", [agentId], (err, results) => {
                 if (err) {
                     return reject(err);
                 }
@@ -195,7 +195,7 @@ export default class Db {
         });
     }
 
-    public async addMember(login: string, password: string): Promise<Agent> {
+    public async addAgent(login: string, password: string): Promise<Agent> {
 
         return new Promise((resolve, reject) => {
             this.conn.query<ResultSetHeader>("INSERT INTO membre (login, password) VALUES (?, ?)", [login, password], (err, results) => {
@@ -214,7 +214,7 @@ export default class Db {
 
     }
 
-    public async getMember(login: string): Promise<Agent> {
+    public async getAgent(login: string): Promise<Agent> {
         return new Promise((resolve, reject) => {
             this.conn.query<RowDataPacket[]>("SELECT * FROM membre WHERE login = ?", [login], (err, results) => {
                 if (err) {
@@ -222,7 +222,7 @@ export default class Db {
                 }
 
                 if (results.length === 0) {
-                    return reject(new Error("Member not found"));
+                    return reject(new Error("Agent not found"));
                 } else {
                     const row = results[0];
                     resolve({
@@ -235,7 +235,7 @@ export default class Db {
         });
     }
 
-    public async getMemberById(id: number): Promise<Agent> {
+    public async getAgentById(id: number): Promise<Agent> {
         return new Promise((resolve, reject) => {
             this.conn.query<RowDataPacket[]>("SELECT * FROM membre WHERE id = ?", [id], (err, results) => {
                 if (err) {
@@ -243,7 +243,7 @@ export default class Db {
                 }
 
                 if (results.length === 0) {
-                    return reject(new Error("Member not found"));
+                    return reject(new Error("Agent not found"));
                 } else {
                     const row = results[0];
                     resolve({
