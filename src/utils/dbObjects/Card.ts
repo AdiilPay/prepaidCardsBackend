@@ -10,7 +10,7 @@ export default class Card extends baseObject {
         return new Promise((resolve, reject) => {
             this.db.select("SELECT * FROM carte WHERE id = ?", [id]).then((results) => {
                 if (results.length === 0) {
-                    return reject("Carte not found");
+                    return reject("Card not found");
                 }
 
                 resolve(new Card(results[0].id));
