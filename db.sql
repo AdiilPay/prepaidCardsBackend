@@ -104,7 +104,7 @@ SELECT p.id            AS profile_id,
        o.name          AS organization,
        sum(t.amount)   AS balance
 FROM profile AS p
-         JOIN carte AS c ON p.id = c.profil_id
+         JOIN carte AS c ON p.id = c.profile_id
          JOIN transaction AS t ON c.id = t.carte_id
          JOIN organization AS o ON p.organization_id = o.id
 GROUP BY p.id,

@@ -34,7 +34,7 @@ export default class Db {
         });
     }
 
-    public async select(query: string, params: any[] = []): Promise<any[]> {
+    public async select<T>(query: string, params: any[] = []): Promise<any[T]> {
         return new Promise((resolve, reject) => {
             this.conn.query<RowDataPacket[]>(query, params, (err, results) => {
                 if (err) {
