@@ -1,4 +1,6 @@
 import baseObject from "@utils/dbObjects/baseObject";
+import ServerProfile from "@utils/interfaces/server/profile";
+import Card from "@utils/dbObjects/Card";
 
 export default class Profile extends baseObject {
 
@@ -25,6 +27,23 @@ export default class Profile extends baseObject {
                 resolve(this);
             }).catch(reject);
         });
+    }
+
+    public async getCards(): Promise<Card[]> {
+        return new Promise((resolve, reject) => {
+            this.db.select("SELECT id FROM carte WHERE profile_id = ?", [this.id]).then((results) => {
+                const cards = [];
+                for (const result of results) {
+                    cards.push(Card.get(result.id));
+                }
+                Promise.all(cards).then(resolve).catch(reject);
+            }).catch(reject);
+        });
+    }
+
+    // TODO
+    public async toJSON(): Promise<ServerProfile> {
+
     }
 
 }

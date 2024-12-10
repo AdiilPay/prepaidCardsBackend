@@ -2,6 +2,9 @@ import baseObject from "@utils/dbObjects/baseObject";
 import Profile from "@utils/dbObjects/Profile";
 import Transaction from "@utils/dbObjects/Transaction";
 
+import {CardWithProfile, CardWithProfileID} from "@utils/interfaces/server/carte";
+
+
 export default class Card extends baseObject {
 
     private constructor(id: number) {
@@ -75,6 +78,39 @@ export default class Card extends baseObject {
 
             }).catch(reject);
         });
+    }
+
+    public async getOwnerID(): Promise<number> {
+        return new Promise((resolve, reject) => {
+            this.db.select("SELECT profile_id FROM carte WHERE id = ?", [this.id]).then((results) => {
+                if (results.length === 0) {
+                    return reject("Owner not found");
+                }
+
+                resolve(results[0].profile_id);
+
+            }).catch(reject);
+        })
+    }
+
+    public async toJSON(): Promise<CardWithProfile> {
+
+        let owner = await this.getOwner();
+        let transactions = await this.getTransactions(0, 10);
+
+        return {
+            id: this.id,
+            profile: await owner.toJSON(),
+            enabled: await this.isEnabled()
+        }
+    }
+
+    public async toSimpleJSON(): Promise<CardWithProfileID> {
+        return {
+            id: this.id,
+            profileID: await this.getOwnerID(),
+            enabled: await this.isEnabled()
+        }
     }
 }
 

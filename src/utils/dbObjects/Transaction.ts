@@ -44,7 +44,6 @@ export default class Transaction extends baseObject {
                 Agent.get(results[0].agent_id).then(resolve).catch(reject);
 
             }).catch(reject);
-
         })
     }
 
