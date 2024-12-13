@@ -51,7 +51,7 @@ export default class Profile extends baseObject {
                 }
 
                 const profile = results[0];
-                this.getCards().then((cards) => {
+                this.getCards().then(() => {
                     resolve({
                         id: profile.id,
                         first_name: profile.first_name,
