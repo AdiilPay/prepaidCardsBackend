@@ -1,4 +1,4 @@
-import Db from "@utils/dbObjects/database";
+import Db from "@dbObjects/database";
 
 export default class baseObject {
 

@@ -1,4 +1,4 @@
-import baseObject from "@utils/dbObjects/baseObject";
+import baseObject from "@dbObjects//baseObject";
 
 export default class Organization extends baseObject {
 

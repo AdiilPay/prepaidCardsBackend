@@ -1,4 +1,4 @@
-import baseObject from "@utils/dbObjects/baseObject";
+import baseObject from "@dbObjects/baseObject";
 
 export default class Agent extends baseObject {
 
@@ -8,7 +8,7 @@ export default class Agent extends baseObject {
 
     public static async get(id : number): Promise<Agent> {
         return new Promise((resolve, reject) => {
-            this.db.select("SELECT * FROM agent WHERE id = ?", [id]).then((results) => {
+            this.db.select("SELECT * FROM agent WHERE id = ?", [id]).then((results: any) => {
                 if (results.length === 0) {
                     return reject("Agent not found");
                 }

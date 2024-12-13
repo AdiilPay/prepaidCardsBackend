@@ -1,6 +1,6 @@
-import baseObject from "@utils/dbObjects/baseObject";
-import Card from "@utils/dbObjects/Card";
-import Agent from "@utils/dbObjects/Agent";
+import baseObject from "@dbObjects/baseObject";
+import Card from "@dbObjects/Card";
+import Agent from "@dbObjects/Agent";
 
 export default class Transaction extends baseObject {
 

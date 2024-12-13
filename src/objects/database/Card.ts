@@ -1,8 +1,8 @@
-import baseObject from "@utils/dbObjects/baseObject";
-import Profile from "@utils/dbObjects/Profile";
-import Transaction from "@utils/dbObjects/Transaction";
+import baseObject from "@dbObjects/baseObject";
+import Profile from "@dbObjects/Profile";
+import Transaction from "@dbObjects/Transaction";
 
-import ServerCard from "@utils/interfaces/server/card";
+import ServerCard from "@serverObjects/card";
 
 
 export default class Card extends baseObject {
