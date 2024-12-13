@@ -1,6 +1,6 @@
 import {Mutex} from 'async-mutex';
 
-class SnowflakeGenerator {
+export default class SnowflakeGenerator {
     private static instance: SnowflakeGenerator | null = null;
     private static instanceMutex = new Mutex();
 
