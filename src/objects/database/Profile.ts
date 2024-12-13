@@ -44,6 +44,24 @@ export default class Profile extends baseObject {
     // TODO
     public async toJSON(): Promise<ServerProfile> {
 
-    }
+        return new Promise((resolve, reject) => {
+            this.db.select("SELECT * FROM profile WHERE id = ?", [this.id]).then((results) => {
+                if (results.length === 0) {
+                    return reject("Profile not found");
+                }
+
+                const profile = results[0];
+                this.getCards().then((cards) => {
+                    resolve({
+                        id: profile.id,
+                        first_name: profile.first_name,
+                        last_name: profile.last_name,
+                        creation_date: profile.creation_date,
+                        points: profile.points,
+                    });
+                }).catch(reject);
+            }).catch(reject);
+
+    })};
 
 }
