@@ -1,10 +1,11 @@
-import {NextFunction, request, Request, Response} from 'express';
+import {NextFunction, Request, Response} from 'express';
 import jwt, {JwtPayload} from 'jsonwebtoken';
-import * as process from "node:process";
+import Agent from "@dbObjects/Agent";
 
-export default (req: Request, res: Response, next: NextFunction): void => {
+export default async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const authHeader = req.headers['authorization'];
 
+    // On récupère ce qui suit le mot "Bearer" dans le header
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
@@ -12,16 +13,20 @@ export default (req: Request, res: Response, next: NextFunction): void => {
 
     } else {
 
-        //                "as string" nécessaire pour que typescript comprenne que process.env.SECRET_KEY est bien une string
-        jwt.verify(token, process.env.SECRET_KEY as string, (err, user) => {
+        //                "as string" nécessaire pour que typescript comprenne que process.env.SECRET_KEY est bien un string
+        jwt.verify(token, process.env.SECRET_KEY as string, async (err, user) => {
             // Vérification du token
             // Si le token matche avec la clé secrète, on peut continuer
 
             if (err) {
                 res.status(403).json({message: 'Token invalide'});
             } else {
-                // On stocke les informations de l'utilisateur dans req.user
-                req.user = user as JwtPayload;
+
+                const data = user as JwtPayload;
+
+                const agent = Agent.get(data.id);
+
+                req.user = await agent;
                 next();
             }
         });
