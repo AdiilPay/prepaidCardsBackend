@@ -3,14 +3,21 @@ import Db from "@dbObjects/database";
 export default class baseObject {
 
     static #db: Db;
-    protected id : number
+    protected _id : bigint
 
-    protected constructor(id: number) {
+    public get id() : bigint {
+        return this._id;
+    }
+    protected set id(v : bigint) {
+        this._id = v;
+    }
+
+    protected constructor(id: bigint) {
         if (!baseObject.#db) {
             baseObject.#db = Db.getInstance();
         }
 
-        this.id = id;
+        this._id = id;
     }
 
     protected static get db(): Db {

@@ -1,9 +1,9 @@
 export default interface Transaction {
 
-    id : number;
+    id : bigint;
     login : string;
     date : Date;
     montant : number;
-    carte_id : string;
+    carte_id : bigint;
 
 }

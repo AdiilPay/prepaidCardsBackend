@@ -4,7 +4,7 @@ import Agent from "@dbObjects/Agent";
 
 export default class Transaction extends baseObject {
 
-    private constructor(id: number) {
+    private constructor(id: bigint) {
         super(id);
     }
 

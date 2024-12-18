@@ -2,11 +2,11 @@ import baseObject from "@dbObjects//baseObject";
 
 export default class Organization extends baseObject {
 
-        private constructor(id: number) {
+        private constructor(id: bigint) {
             super(id);
         }
 
-        public static async get(id : number): Promise<Organization> {
+        public static async get(id : bigint): Promise<Organization> {
             return new Promise((resolve, reject) => {
                 this.db.select("SELECT * FROM profile WHERE id = ?", [id]).then((results) => {
                     if (results.length === 0) {

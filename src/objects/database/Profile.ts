@@ -4,11 +4,11 @@ import Card from "@dbObjects/Card";
 
 export default class Profile extends baseObject {
 
-    private constructor(id: number) {
+    private constructor(id: bigint) {
         super(id);
     }
 
-    public static async get(id : number): Promise<Profile> {
+    public static async get(id : bigint): Promise<Profile> {
         return new Promise((resolve, reject) => {
             this.db.select("SELECT * FROM profile WHERE id = ?", [id]).then((results) => {
                 if (results.length === 0) {

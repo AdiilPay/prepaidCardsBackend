@@ -1,6 +1,6 @@
 export default interface Agent {
 
-    id: number;
+    id: bigint;
     login: string;
     password: string;
 

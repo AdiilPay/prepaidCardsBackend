@@ -1,6 +1,6 @@
 export default interface Transaction {
 
-    id : number;
+    id : bigint;
     cardId : number;
     profileId: number;
     date : Date;

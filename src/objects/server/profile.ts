@@ -1,5 +1,5 @@
 export default interface Profile {
-    id: number;
+    id: bigint;
     first_name: string;
     last_name: string;
     creation_date: Date;

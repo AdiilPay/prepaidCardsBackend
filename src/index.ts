@@ -3,11 +3,23 @@ import express from 'express';
 import dotenv from 'dotenv';
 import loadRoutes from "@utils/loadRoutes";
 
+import errorHandler from "@utils/errorHandler";
+
+// Oui, c'est nécéssaire. Non, on ne peut pas faire autrement. Oui, c'est évidement du JS
+
+// @ts-ignore
+BigInt.prototype.toJSON = function () {
+    return this.toString();
+};
+
 dotenv.config();
 
 const app = express();
 
+// Middleware pour parser le JSON, avec une gestion d'erreur
 app.use(express.json());
+app.use(errorHandler);
+
 
 // On charge dynamiquement toutes les endpoints
 loadRoutes(app);

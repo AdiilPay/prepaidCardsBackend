@@ -19,6 +19,7 @@ export default async (req: Request, res: Response, next: NextFunction): Promise<
             // Si le token matche avec la clé secrète, on peut continuer
 
             if (err) {
+
                 res.status(403).json({message: 'Token invalide'});
             } else {
 
