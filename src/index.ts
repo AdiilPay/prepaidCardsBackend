@@ -5,13 +5,6 @@ import loadRoutes from "@utils/loadRoutes";
 
 import errorHandler from "@utils/errorHandler";
 
-// Oui, c'est nécéssaire. Non, on ne peut pas faire autrement. Oui, c'est évidement du JS
-
-// @ts-ignore
-BigInt.prototype.toJSON = function () {
-    return this.toString();
-};
-
 dotenv.config();
 
 const app = express();

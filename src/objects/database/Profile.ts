@@ -1,6 +1,7 @@
 import baseObject from "@dbObjects/baseObject";
 import ServerProfile from "@serverObjects/profile";
 import Card from "@dbObjects/Card";
+import {toBigInt} from "@utils/parser";
 
 export default class Profile extends baseObject {
 
@@ -29,15 +30,14 @@ export default class Profile extends baseObject {
         });
     }
 
-    public async getCards(): Promise<Card[]> {
+    public async getCards(): Promise<bigint[]> {
         return new Promise((resolve, reject) => {
-            this.db.select("SELECT id FROM carte WHERE profile_id = ?", [this.id]).then((results) => {
-                const cards = [];
-                for (const result of results) {
-                    cards.push(Card.get(result.id));
-                }
-                Promise.all(cards).then(resolve).catch(reject);
-            }).catch(reject);
+            this.db.select("SELECT id FROM carte WHERE profile_id = ?", [this.id]).then((results: {id: string}[]) => {
+                // On transforme tous les id en BigInt
+                // Et on dégage les null
+                resolve(results.map((card) => toBigInt(card.id)).filter((id) => id !== null));
+            }
+            ).catch(reject);
         });
     }
 

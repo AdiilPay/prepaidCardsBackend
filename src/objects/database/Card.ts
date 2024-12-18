@@ -13,14 +13,14 @@ export default class Card extends baseObject {
         super(id);
     }
 
-    public static async get(id: bigint): Promise<Card> {
+    public static async get(id: bigint): Promise<Card | null> {
         return new Promise((resolve, reject) => {
             this.db.select("SELECT * FROM carte WHERE id = ?", [id]).then((results) => {
-                if (results.length === 0) {
-                    return reject("Card not found");
+                if (results.length == 0) {
+                    resolve(null);
+                } else {
+                    resolve(new Card(results[0].id));
                 }
-
-                resolve(new Card(results[0].id));
 
             }).catch(reject);
         });

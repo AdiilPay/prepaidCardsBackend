@@ -28,7 +28,7 @@ export default class Transaction extends baseObject {
                     return reject("Card not found");
                 }
 
-                Card.get(results[0].carte_id).then(resolve).catch(reject);
+                Card.get(results[0].carte_id).then((result) => resolve(result!)).catch(reject);
 
             }).catch(reject);
         });
