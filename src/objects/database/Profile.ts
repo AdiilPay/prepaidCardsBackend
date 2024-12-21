@@ -9,14 +9,14 @@ export default class Profile extends baseObject {
         super(id);
     }
 
-    public static async get(id : bigint): Promise<Profile> {
+    public static async get(id : bigint): Promise<Profile | null> {
         return new Promise((resolve, reject) => {
             this.db.select("SELECT * FROM profile WHERE id = ?", [id]).then((results) => {
                 if (results.length === 0) {
-                    return reject("Profile not found");
+                    return resolve(null);
+                } else {
+                    resolve(new Profile(id));
                 }
-
-                resolve(new Profile(results[0].id));
 
             }).catch(reject);
         });

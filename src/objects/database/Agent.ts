@@ -7,24 +7,24 @@ export default class Agent extends baseObject {
         super(id);
     }
 
-    public static async get(id : bigint): Promise<Agent> {
+    public static async get(id : bigint): Promise<Agent | null> {
         return new Promise((resolve, reject) => {
             this.db.select("SELECT * FROM agent WHERE id = ?", [id]).then((results: any) => {
                 if (results.length === 0) {
-                    return reject("Agent not found");
+                    return resolve(null)
                 }
 
-                resolve(new Agent(results[0].id));
+                resolve(new Agent(id));
 
             }).catch(reject);
         });
     }
 
-    public static async login(login: string, password: string): Promise<Agent> {
+    public static async login(login: string, password: string): Promise<Agent | null> {
         return new Promise(async (resolve, reject) => {
             this.db.select("SELECT id, password FROM agent WHERE login = ?", [login]).then( async (results: any) => {
                 if (results.length === 0) {
-                    return reject("Invalid credentials");
+                    return resolve(null);
                 }
 
                 if (await compare(password, results[0].password)) {

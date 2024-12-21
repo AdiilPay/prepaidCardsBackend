@@ -8,14 +8,14 @@ export default class Transaction extends baseObject {
         super(id);
     }
 
-    public static async get(id: number): Promise<Transaction> {
+    public static async get(id: bigint): Promise<Transaction> {
         return new Promise((resolve, reject) => {
             this.db.select("SELECT * FROM transaction WHERE id = ?", [id]).then((results) => {
                 if (results.length === 0) {
                     return reject("Transaction not found");
                 }
 
-                resolve(new Transaction(results[0].id));
+                resolve(new Transaction(id));
 
             }).catch(reject);
         });

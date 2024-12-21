@@ -19,7 +19,7 @@ export default class Card extends baseObject {
                 if (results.length == 0) {
                     resolve(null);
                 } else {
-                    resolve(new Card(results[0].id));
+                    resolve(new Card(id));
                 }
 
             }).catch(reject);
@@ -70,7 +70,7 @@ export default class Card extends baseObject {
                     return reject("Owner not found");
                 }
 
-                Profile.get(results[0].profile_id).then(resolve).catch(reject);
+                Profile.get(results[0].profile_id).then(profile => resolve(profile!)).catch(reject);
 
             }).catch(reject);
         })

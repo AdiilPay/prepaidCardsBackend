@@ -13,7 +13,7 @@ export default class Organization extends baseObject {
                         return reject("Profile not found");
                     }
 
-                    resolve(new Organization(results[0].id));
+                    resolve(new Organization(id));
 
                 }).catch(reject);
             });
