@@ -9,6 +9,12 @@ dotenv.config();
 
 const app = express();
 
+// On ajoute une méthode toJSON pour les BigInt parce que, evidemment, JS ne sait pas les gérer
+// @ts-ignore
+BigInt.prototype.toJSON = function () {
+    return String(this);
+};
+
 // Middleware pour parser le JSON, avec une gestion d'erreur
 app.use(express.json());
 app.use(errorHandler);
