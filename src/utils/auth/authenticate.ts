@@ -25,9 +25,15 @@ export default async (req: Request, res: Response, next: NextFunction): Promise<
 
                 const data = user as JwtPayload;
 
-                const agent = Agent.get(data.id);
+                const agent = await Agent.get(data.id);
 
-                req.user = await agent;
+                // Si l'agent n'existe plus dans la base de données
+                if (agent === null) {
+                    res.status(403).json({message: 'Token invalide'});
+                    return;
+                }
+
+                req.user = (await Agent.get(data.id))!;
                 next();
             }
         });
