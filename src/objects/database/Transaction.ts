@@ -41,7 +41,7 @@ export default class Transaction extends baseObject {
                     return reject("Agent not found");
                 }
 
-                Agent.get(results[0].agent_id).then(resolve).catch(reject);
+                Agent.get(results[0].agent_id).then(agent => resolve(agent!)).catch(reject);
 
             }).catch(reject);
         })
