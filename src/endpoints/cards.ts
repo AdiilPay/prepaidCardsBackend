@@ -1,7 +1,6 @@
 import { Router, Request, Response } from 'express';
 
 import card from "@dbObjects/Card";
-import profile from "@dbObjects/Profile";
 
 import authenticate from "@utils/auth/authenticate";
 import {toBigInt} from "@utils/parser";
