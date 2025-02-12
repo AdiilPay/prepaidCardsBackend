@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DB_URL")
+}
+
+model Admin {
+  id             String        @id @default(uuid())
+  login          String
+  password       String
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  organizationId String
+  transactions   Transaction[]
+}
+
+model Card {
+  id           String        @id @default(uuid()) @db.Char(36)
+  enabled      Boolean       @default(true)
+  user         User          @relation(fields: [userId], references: [id])
+  userId       String        @db.Char(36)
+  transactions Transaction[]
+}
+
+model Organization {
+  id     String  @id @default(uuid())
+  users  User[]
+  admins Admin[]
+}
+
+enum TransactionType {
+  PAYMENT
+  DEPOSIT
+  REFUND
+  WITHDRAWAL
+  SYSTEM
+}
+
+model Transaction {
+  id          String   @id @default(uuid()) @db.Char(36)
+  date        DateTime @default(now())
+  amount      Decimal  @db.Decimal(10, 2)
+  type        TransactionType
+  description String   @default("") @db.Text
+  card        Card     @relation(fields: [cardId], references: [id])
+  cardId      String   @db.Char(36)
+  admin       Admin    @relation(fields: [adminId], references: [id])
+  adminId     String   @db.Char(36)
+}
+
+model User {
+  id             String       @id @default(uuid())
+  name           String       @db.VarChar(255)
+  surname        String       @db.VarChar(255)
+  createdAt      DateTime     @default(now())
+  cards          Card[]
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @db.Char(36)
+}
