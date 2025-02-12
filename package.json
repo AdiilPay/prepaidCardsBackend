@@ -10,6 +10,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.3",
     "tsconfig-paths": "^4.2.0",
+    "typeorm": "^0.3.20",
     "uuid": "^10.0.0",
     "zod": "^3.23.8"
   },
@@ -30,7 +31,8 @@
   "scripts": {
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node dist/index.js",
-    "dev": "nodemon -r tsconfig-paths/register src/index.ts"
+    "dev": "nodemon -r tsconfig-paths/register src/index.ts",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
   "keywords": [],
   "author": "",
