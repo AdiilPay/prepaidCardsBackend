@@ -1,22 +1,22 @@
-// src/middleware/validationMiddleware.ts
-import { Request, Response, NextFunction } from 'express';
-import { z, ZodError } from 'zod';
+import { Request, Response, NextFunction } from "express";
+import { z, ZodError } from "zod";
+import DataError from "@errors/DataError";
 
-
-export default function validateData(schema: z.ZodObject<any, any>) {
-    return (req: Request, res: Response, next: NextFunction) => {
+export default function validateData<T extends z.ZodType<any, any>>(schema: T) {
+    return (req: Request<{}, {}, z.infer<T>>, res: Response, next: NextFunction) => {
         try {
-            schema.parse(req.body);
+            req.body = schema.parse(req.body);
             next();
         } catch (error) {
             if (error instanceof ZodError) {
-                const errorMessages = error.errors.map((issue: any) => ({
-                    message: `${issue.path.join('.')} is ${issue.message}`,
-                }))
-                res.status(400).json({ error: 'Invalid data', details: errorMessages });
-            } else {
-                res.status(500).json({ error: 'Internal Server Error' });
+                const errorMessages = error.errors.map((issue) => (
+                    `${issue.path.join(".")} is ${issue.message}`
+                ));
+
+                error = new DataError(errorMessages);
             }
+
+            next(error);
         }
     };
 }

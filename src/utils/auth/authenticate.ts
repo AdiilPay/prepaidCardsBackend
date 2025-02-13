@@ -1,41 +1,38 @@
-import {NextFunction, Request, Response} from 'express';
-import jwt, {JwtPayload} from 'jsonwebtoken';
-import Agent from "@dbObjects/Agent";
+import {Request, Response, NextFunction} from "express";
+import jwt, {JwtPayload} from "jsonwebtoken";
+import prismaClient from "@prismaClient";
+import {AuthenticatedRequest} from "@utils/auth/AuthenticatedRequest";
+import InvalidTokenError from "@errors/InvalidTokenError";
 
-export default async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const authHeader = req.headers['authorization'];
+export default async function authenticate(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const authHeader = req.headers.authorization;
 
-    // On récupère ce qui suit le mot "Bearer" dans le header
-    const token = authHeader && authHeader.split(' ')[1];
+        if (!authHeader || !authHeader.startsWith("Bearer ") || authHeader.split(" ").length !== 2) {
+            throw new InvalidTokenError();
+        }
 
-    if (!token) {
-        res.status(401).json({message: 'Accès refusé : aucun token fourni'});
+        const token = authHeader.split(" ")[1];
 
-    } else {
+        try {
+            const data = jwt.verify(token, process.env.SECRET_KEY as string) as JwtPayload;
 
-        //                "as string" nécessaire pour que typescript comprenne que process.env.SECRET_KEY est bien un string
-        jwt.verify(token, process.env.SECRET_KEY as string, async (err, user) => {
-            // Vérification du token
-            // Si le token matche avec la clé secrète, on peut continuer
 
-            if (err) {
+            const admin = await prismaClient.admin.findUnique({
+                where: {id: data.id}
+            });
 
-                res.status(403).json({message: 'Token invalide'});
-            } else {
-
-                const data = user as JwtPayload;
-
-                const agent = await Agent.get(data.id);
-
-                // Si l'agent n'existe plus dans la base de données
-                if (agent === null) {
-                    res.status(403).json({message: 'Token invalide'});
-                    return;
-                }
-
-                req.user = (await Agent.get(data.id))!;
-                next();
+            if (!admin) {
+                throw new InvalidTokenError();
             }
-        });
-    }
+
+            (req as AuthenticatedRequest).admin = admin;
+
+            next();
+
+        } catch (e) {
+            throw new InvalidTokenError();
+        }
+
+    } catch (e) {next(e);}
 }

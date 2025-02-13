@@ -1,9 +1,9 @@
-import ServerAgent from "@dbObjects/Agent";
-
 import jwt from "jsonwebtoken";
 
-export default function createToken(agent : ServerAgent): string {
+import {Admin} from "@prisma/client";
 
-    return jwt.sign({id: agent.id}, process.env.SECRET_KEY as string, {expiresIn: '14h'});
+export default function createToken(admin : Admin): string {
+
+    return jwt.sign({id: admin.id}, process.env.SECRET_KEY as string, {expiresIn: '14h'});
 
 }
