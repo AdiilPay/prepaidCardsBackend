@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import TransactionEnum from "../transactionType";
+import TransactionType from '@prisma/client';
 
 export default z.object({
-    amount: z.number().positive(),
-    type: z.nativeEnum(TransactionEnum),
-    description: z.string().max(512).optional()
+    amount: z.number().multipleOf(0.01),
+    type: z.nativeEnum(TransactionType.TransactionType),
+    description: z.string().default(""),
 });
