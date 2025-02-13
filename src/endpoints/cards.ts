@@ -1,58 +1,29 @@
-import { Router, Request, Response } from 'express';
+import {Router, Request, Response} from 'express';
 
-import card from "@dbObjects/Card";
+import PrismaClient from '@prismaClient'
 
-import authenticate from "@utils/auth/authenticate";
-import {toBigInt} from "@utils/parser";
+import asyncHandler from "@utils/asyncHandler";
 
 const router = Router();
 
 // Pas d'authentification pour cette route
-router.get('/cards/:cardid', async (req: Request, res: Response) => {
+router.get('/cards/:cardid', asyncHandler(async (req: Request, res: Response) => {
 
-        const cardId = toBigInt(req.params.cardid);
+    const cardId = req.params.cardid;
 
-        if (cardId === null) {
-            res.status(400).json({ error: "Invalid card id" });
-
-        } else {
-            card.get(cardId).then(async (card) => {
-                if (card === null) {
-                    res.status(404).json({ error: "Card not found" });
-                } else {
-                    res.status(200).json(await card.toJSON());
-                }
-            }).catch((error) => {
-                res.status(400).json({error});
-            });
+    const result = await PrismaClient.card.findUnique({
+        where: {
+            id: cardId
         }
-})
 
-// Désactive la carte
-router.delete('/cards/:cardid', authenticate, async (req: Request, res: Response) => {
+    });
 
-        const cardId = toBigInt(req.params.cardid);
-
-        if (cardId === null) {
-            res.status(400).json({ error: "Invalid card id" });
-
-        } else {
-            card.get(cardId).then(async (card) => {
-                if (card === null) {
-                    res.status(404).json({ error: "Card not found" });
-                } else {
-                    card.disable().then(() => {
-                        res.status(200).json({ success: true });
-                    }).catch((error) => {
-                        res.status(400).json({error});
-                    });
-                }
-            }).catch((error) => {
-                res.status(400).json({error});
-            });
-        }
-})
-
+    if (result === null) {
+        res.status(404).json({error: "Card not found"});
+    } else {
+        res.status(200).json(result);
+    }
+}));
 
 
 export default router;

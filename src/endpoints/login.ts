@@ -1,25 +1,44 @@
 import { Router, Request, Response } from 'express';
 import validate from "@utils/bodyValidation"
-import login from "@clientObjects/login";
-
-import dbAgent from "@dbObjects/Agent";
+import loginBody from "@clientObjects/login";
 
 import createToken from "@utils/auth/createTokens";
 
+import {compare} from "@utils/auth/passwords";
+
 const router = Router();
 
+import prismaClient from "@prismaClient";
+import {z} from "zod";
 
-router.post('/login', validate(login), (req: Request, res: Response) => {
+import AuthenticationError from "@errors/AuthenticationError";
 
-    dbAgent.login(req.body.login, req.body.password).then((agent) => {
-        if (agent === null) {
-            res.status(401).json({ error: "Invalid credentials" });
-        } else {
-            res.status(200).json({ token: createToken(agent) });
+type LoginForm = z.infer<typeof loginBody>;
+
+router.post('/login', validate(loginBody), async (req: Request<{}, {}, LoginForm>, res: Response) => {
+
+    const {login, password} = req.body;
+
+    const admin = await prismaClient.admin.findUnique({
+        where: {
+            login: login
         }
-    }).catch((error) => {
-        res.status(400).json({ error });
-    });
+    })
+
+    if (admin === null) {
+        throw new AuthenticationError();
+    }
+
+    const passwordMatch = await compare(password, admin.password);
+
+    if (!passwordMatch) {
+        throw new AuthenticationError();
+    }
+
+    const token = createToken(admin);
+
+    res.status(200);
+    res.json({token: token});
 
 });
 
