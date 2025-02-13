@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import {Router, Request, Response} from 'express';
 import validate from "@utils/bodyValidation"
 import loginBody from "@clientObjects/login";
 
@@ -12,35 +12,37 @@ import prismaClient from "@prismaClient";
 import {z} from "zod";
 
 import AuthenticationError from "@errors/AuthenticationError";
+import asyncHandler from "@utils/asyncHandler";
 
 type LoginForm = z.infer<typeof loginBody>;
 
-router.post('/login', validate(loginBody), async (req: Request<{}, {}, LoginForm>, res: Response) => {
+router.post('/login', validate(loginBody),
+    asyncHandler(async (req: Request<{}, {}, LoginForm>, res: Response) => {
 
-    const {login, password} = req.body;
+        const {login, password} = req.body;
 
-    const admin = await prismaClient.admin.findUnique({
-        where: {
-            login: login
+        const admin = await prismaClient.admin.findUnique({
+            where: {
+                login: login
+            }
+        })
+
+        if (admin === null) {
+            throw new AuthenticationError();
         }
-    })
 
-    if (admin === null) {
-        throw new AuthenticationError();
-    }
+        const passwordMatch = await compare(password, admin.password);
 
-    const passwordMatch = await compare(password, admin.password);
+        if (!passwordMatch) {
+            throw new AuthenticationError();
+        }
 
-    if (!passwordMatch) {
-        throw new AuthenticationError();
-    }
+        const token = createToken(admin);
 
-    const token = createToken(admin);
+        res.status(200);
+        res.json({token: token});
 
-    res.status(200);
-    res.json({token: token});
-
-});
+    }));
 
 
 export default router;

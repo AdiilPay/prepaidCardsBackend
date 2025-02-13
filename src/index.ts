@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import loadRoutes from "@utils/loadRoutes";
 
 import errorHandler from "@utils/errorHandler";
-import prisma from "@prismaClient";
 
 dotenv.config();
 

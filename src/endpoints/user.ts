@@ -14,7 +14,8 @@ const router = Router();
 
 type BodyForm = z.infer<typeof userBody>;
 
-router.post('/user', authenticate, validate(userBody), asyncHandler(async (req: AuthenticatedRequest<BodyForm>, res: Response) => {
+router.post('/user', authenticate, validate(userBody),
+    asyncHandler(async (req: AuthenticatedRequest<BodyForm>, res: Response) => {
     const result = await PrismaClient.user.create({
         data: {
             name: req.body.name,
@@ -27,7 +28,8 @@ router.post('/user', authenticate, validate(userBody), asyncHandler(async (req: 
     res.json(result);
 }));
 
-router.get('/user', authenticate, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+router.get('/user', authenticate,
+    asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const users = await PrismaClient.user.findMany({
         where: {
             organizationId: req.admin!.organizationId
@@ -37,15 +39,20 @@ router.get('/user', authenticate, asyncHandler(async (req: AuthenticatedRequest,
     res.json(users);
 }));
 
-router.get('/user/:id', authenticate, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+router.get('/user/:id', authenticate,
+    asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const user = await PrismaClient.user.findUnique({
         where: {
             id: req.params.id,
-            organizationId: req.admin!.organizationId
+            organizationId: req.admin!.organizationId,
         },
 
         include: {
-            cards: true
+            cards: {
+                where: {
+                    enabled: true
+                }
+            }
         }
 
     });
