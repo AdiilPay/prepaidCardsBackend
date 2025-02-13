@@ -15,7 +15,7 @@ datasource db {
 
 model Admin {
   id             String        @id @default(uuid())
-  login          String        @db.VarChar(255)
+  login          String        @db.VarChar(255) @unique
   password       String        @db.Char(60)
   organization   Organization  @relation(fields: [organizationId], references: [id])
   organizationId String
