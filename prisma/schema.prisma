@@ -64,4 +64,5 @@ model User {
   cards          Card[]
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String       @db.Char(36)
+  balance        Decimal      @default(0) @db.Decimal(10, 2)
 }
