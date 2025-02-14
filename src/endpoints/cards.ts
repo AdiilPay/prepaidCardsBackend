@@ -41,6 +41,7 @@ router.post('/user/:userid/cards', authenticate,
             where: {
                 id: req.params.userid,
                 organizationId: req.admin!.organizationId,
+                deleted: false
             },
         });
 
@@ -63,30 +64,19 @@ router.delete('/cards/:cardid', authenticate,
     asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
         const cardId = req.params.cardid;
 
-        try {
-            const result = await PrismaClient.card.update({
-                where: {
-                    id: cardId,
-                    user: {
-                        organizationId: req.admin!.organizationId
-                    }
-                },
-                data: {
-                    enabled: false
+        const result = await PrismaClient.card.update({
+            where: {
+                id: cardId,
+                user: {
+                    organizationId: req.admin!.organizationId
                 }
-            });
-
-            res.status(200).json(result);
-        } catch (e) {
-
-            if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2025") {
-                e = new NotFoundError();
+            },
+            data: {
+                enabled: false
             }
+        });
 
-            throw e;
-
-        }
-
+        res.status(204).json(result);
 
     }));
 

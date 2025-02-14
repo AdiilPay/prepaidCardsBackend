@@ -15,6 +15,7 @@ import asyncHandler from "@utils/asyncHandler";
 import {Card, User} from "@prisma/client";
 import InsufficientBalanceError from "@errors/insufficientBalanceError";
 import DisabledCardUseError from "@errors/DisabledCardUseError";
+import deepTransformDecimals from "@utils/deepTransformDecimals";
 
 type TransactionForm = z.infer<typeof transactionBody>;
 
@@ -25,7 +26,8 @@ router.post('/card/:cardid/transaction', authenticate, validate(transactionBody)
             where: {
                 id: req.params.cardid,
                 user: {
-                    organizationId: req.admin!.organizationId
+                    organizationId: req.admin!.organizationId,
+                    deleted: false
                 }
             },
             include: {
@@ -103,10 +105,14 @@ router.get('/card/:cardId/transactions',
             },
             skip: start,
             take: count,
+
+            orderBy: {
+                date: 'desc'
+            }
         });
 
         res.status(200);
-        res.json(transactions);
+        res.json(deepTransformDecimals(transactions));
     }));
 
 router.get('/user/:userId/transactions',
@@ -133,10 +139,14 @@ router.get('/user/:userId/transactions',
                 },
                 skip: start,
                 take: count,
+
+                orderBy: {
+                    date: 'desc'
+                }
             });
 
         res.status(200);
-        res.json(transactions);
+        res.json(deepTransformDecimals(transactions));
     }));
 
 

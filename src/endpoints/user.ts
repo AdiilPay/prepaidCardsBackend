@@ -7,8 +7,11 @@ import validate from "@utils/bodyValidation";
 import userBody from "@clientObjects/user";
 import {z} from "zod";
 
+import NotFoundError from '@errors/NotFoundError';
+
 import {AuthenticatedRequest} from "@utils/auth/AuthenticatedRequest";
 import asyncHandler from "@utils/asyncHandler";
+import deepTransformDecimals from "@utils/deepTransformDecimals";
 
 const router = Router();
 
@@ -32,11 +35,12 @@ router.get('/user', authenticate,
     asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const users = await PrismaClient.user.findMany({
         where: {
-            organizationId: req.admin!.organizationId
+            organizationId: req.admin!.organizationId,
+            deleted: false
         },
     });
 
-    res.json(users);
+    res.json(deepTransformDecimals(users));
 }));
 
 router.get('/user/:id',
@@ -44,6 +48,7 @@ router.get('/user/:id',
     const user = await PrismaClient.user.findUnique({
         where: {
             id: req.params.id,
+            deleted: false
         },
 
         include: {
@@ -53,9 +58,41 @@ router.get('/user/:id',
                 }
             }
         }
-
     });
-    res.json(user);
+
+    if (user === null) {
+        throw new NotFoundError();
+    }
+
+    res.json(deepTransformDecimals(user));
+}));
+
+router.delete('/user/:id', authenticate,
+    asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const user = await PrismaClient.user.findUnique({
+        where: {
+            id: req.params.id,
+            organizationId: req.admin!.organizationId
+        }
+    });
+
+    if (user === null) {
+        throw new NotFoundError();
+    }
+
+    await PrismaClient.user.update({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            deleted: true,
+            name : "deleted",
+            surname: "deleted"
+        }
+    });
+
+    res.status(204);
+    res.send();
 }));
 
 
