@@ -39,12 +39,11 @@ router.get('/user', authenticate,
     res.json(users);
 }));
 
-router.get('/user/:id', authenticate,
+router.get('/user/:id',
     asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const user = await PrismaClient.user.findUnique({
         where: {
             id: req.params.id,
-            organizationId: req.admin!.organizationId,
         },
 
         include: {

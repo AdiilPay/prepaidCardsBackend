@@ -54,10 +54,6 @@ router.post('/user/:userid/cards', authenticate,
             data: {
                 userId: req.params.userid
             },
-
-            include: {
-                user: true
-            }
         })
 
         res.status(201).json(result);
