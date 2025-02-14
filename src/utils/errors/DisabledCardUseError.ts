@@ -1,12 +1,9 @@
 import AppError from "./AppError";
 
-export default class DataError extends AppError {
+export default class DisabledCardUseError extends AppError {
 
-    details: any
-
-    constructor(description: any) {
+    constructor() {
         super("This card has been disabled and can’t be used anymore.", 403);
 
-        this.details = description;
     }
 }
