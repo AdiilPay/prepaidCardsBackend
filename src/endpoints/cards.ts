@@ -1,6 +1,5 @@
 import {Request, Response, Router} from 'express';
 
-import {Prisma} from '@prisma/client';
 import PrismaClient from '@prismaClient'
 
 
