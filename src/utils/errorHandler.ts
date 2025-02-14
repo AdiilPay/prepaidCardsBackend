@@ -19,6 +19,7 @@ export default function (error: any, req: any, res: any, next: () => void) {
         return;
 
     } else if (error) {
+        console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
         return;
     }
