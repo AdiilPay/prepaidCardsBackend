@@ -45,3 +45,5 @@ router.get('/admins', authenticate,
         res.status(200);
         res.json(admins);
 }));
+
+export default router;
