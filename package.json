@@ -34,7 +34,7 @@
    },
    "scripts": {
       "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
-      "start": "ts-node src/index.ts",
+      "start": "ts-node -r tsconfig-paths/register src/index.ts",
       "dev": "nodemon -r tsconfig-paths/register src/index.ts"
    },
    "keywords": [],
