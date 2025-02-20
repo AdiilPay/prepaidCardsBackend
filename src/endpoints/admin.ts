@@ -8,7 +8,6 @@ import prismaClient from "@prismaClient";
 import {adminStatistics} from "@prisma/client/sql";
 import deepTransformDecimals from "@utils/deepTransformDecimals";
 import router from "./organization";
-import {Prisma} from "@prisma/client";
 import {z} from "zod";
 import fillMissingDates from "@utils/stats/fillMissingDates";
 import {Statistics} from "@utils/stats/StatisticsObject";
