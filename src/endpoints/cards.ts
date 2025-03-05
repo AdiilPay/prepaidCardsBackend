@@ -26,7 +26,7 @@ router.get('/cards/:cardid',
         });
 
         if (result === null) {
-            res.status(404).json({error: "Card not found"});
+            throw new NotFoundError()
         } else {
             res.status(200).json(result);
         }
