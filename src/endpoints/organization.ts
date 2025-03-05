@@ -10,7 +10,6 @@ import authenticate from "@utils/auth/authenticate";
 import prismaClient from "@prismaClient";
 
 import {organizationStatistics} from "@prisma/client/sql"
-import {Prisma} from "@prisma/client";
 
 import organizationStatisticBody from "@clientObjects/organizationStatistics";
 import {z} from "zod";
@@ -18,6 +17,8 @@ import {z} from "zod";
 import deepTransformDecimals from "@utils/deepTransformDecimals";
 import fillMissingDates from "@utils/stats/fillMissingDates";
 import {Statistics} from "@utils/stats/StatisticsObject";
+
+import NotFoundError from "@errors/NotFoundError"
 
 
 type OrganizationStatisticsForm = z.infer<typeof organizationStatisticBody>;
@@ -38,5 +39,24 @@ router.get('/transactions/statistics', authenticate, validate(organizationStatis
         res.json(deepTransformDecimals(fillMissingDates(transactions, from, to)));
     }));
 
+
+router.get('/organization/:orgId', asyncHandler(async (req, res) => {
+
+        const organization = await prismaClient.organization.findUnique({
+            where: {
+                id: req.params.orgId
+            }
+        });
+
+        if (organization === null) {
+                throw new NotFoundError();
+        }
+
+        res.status(200);
+        res.json(organization);
+
+    }
+
+));
 
 export default router;
