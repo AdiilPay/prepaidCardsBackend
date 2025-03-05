@@ -28,5 +28,6 @@ app.use(errorHandler);
 // Démarrer le serveur
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
+    console.log('online')
     console.log(`Serveur en cours d'exécution sur http://localhost:${PORT}`);
 });
