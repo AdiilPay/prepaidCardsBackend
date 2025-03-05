@@ -1,4 +1,4 @@
-import {Router, Response} from 'express';
+import {Router, Response, Request} from 'express';
 
 import PrismaClient from '@prismaClient'
 
@@ -44,13 +44,12 @@ router.get('/user', authenticate,
 }));
 
 router.get('/user/:id',
-    asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    asyncHandler(async (req: Request, res: Response) => {
     const user = await PrismaClient.user.findUnique({
         where: {
             id: req.params.id,
             deleted: false
         },
-
         include: {
             cards: {
                 where: {
