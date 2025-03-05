@@ -13,6 +13,7 @@ import {z} from "zod";
 
 import AuthenticationError from "@errors/AuthenticationError";
 import asyncHandler from "@utils/asyncHandler";
+import {Admin, Organization} from "@prisma/client";
 
 type LoginForm = z.infer<typeof loginBody>;
 
@@ -24,8 +25,12 @@ router.post('/login', validate(loginBody),
         const admin = await prismaClient.admin.findUnique({
             where: {
                 login: login
+            },
+
+            include: {
+                organization: true
             }
-        })
+        }) as (Admin & { organization: Organization }) | null;
 
         if (admin === null) {
             throw new AuthenticationError();
@@ -37,11 +42,16 @@ router.post('/login', validate(loginBody),
             throw new AuthenticationError();
         }
 
+        // On supprime le mot de passe du retour
+        const {password: _, ...adminWithoutPassword} = admin;
+
         const token = createToken(admin);
 
         res.status(200);
-        res.json({token: token});
-
+        res.json({
+            token: token,
+            ...adminWithoutPassword
+        });
     }));
 
 
