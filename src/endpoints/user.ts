@@ -67,6 +67,33 @@ router.get('/user/:id',
     res.json(deepTransformDecimals(user));
 }));
 
+router.put('/user/:id', authenticate, validate(userBody),
+
+    asyncHandler(async (req: AuthenticatedRequest<BodyForm>, res: Response) => {
+    const user = await PrismaClient.user.findUnique({
+        where: {
+            id: req.params.id,
+            organizationId: req.admin!.organizationId
+        }
+    });
+
+    if (user === null) {
+        throw new NotFoundError();
+    }
+
+    const result = await PrismaClient.user.update({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            name: req.body.name,
+            surname: req.body.surname
+        }
+    });
+
+    res.json(result);
+}));
+
 router.delete('/user/:id', authenticate,
     asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const user = await PrismaClient.user.findUnique({
