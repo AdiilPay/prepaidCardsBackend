@@ -1,0 +1,449 @@
+openapi: 3.0.3
+info:
+  title: Easily
+  version: 1.0.0
+servers:
+  - url: api.adiilpay.com/v1
+tags:
+  - name: Auth
+  - name: Cards
+  - name: Transactions
+  - name: Admin
+  - name: Organization
+
+paths:
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Login to an admin account
+      description: Login to an admin account
+      operationId: login
+      requestBody:
+        description: Credidentials of the account
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '401':
+          description: Unauthorized
+
+
+  /cards:
+    post:
+      tags:
+        - Cards
+      security:
+        - BearerAuth: []
+      summary: Create a new card
+      operationId: createnewcard
+
+      requestBody:
+        description: Data about the card
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Card"
+
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '401':
+          description: Unauthorized
+
+
+  /cards/{cardId}:
+    get:
+      tags:
+        - Cards
+      summary: Get info about a card
+      operationId: getcarddetails
+      parameters:
+        - in: path
+          name: cardId
+          schema:
+            type: string
+            example: 12d0797b-f3f4-470d-9578-7749b2e5d8ab
+          required: true
+          description: The id of the card
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '404':
+          description: Not Found
+
+    delete:
+      tags:
+        - Cards
+      security:
+        - BearerAuth: []
+      summary: Disable a card
+      operationId: deletecard
+      parameters:
+        - in: path
+          name: cardId
+          schema:
+            type: string
+            example: 12d0797b-f3f4-470d-9578-7749b2e5d8ab
+          required: true
+          description: The id of the card
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+  /cards/{cardId}/transaction:
+    post:
+      tags:
+        - Transactions
+      security:
+        - BearerAuth: []
+      summary: Create a new transaction
+      operationId: createtransaction
+      parameters:
+        - in: path
+          name: cardId
+          schema:
+            type: string
+            example: 12d0797b-f3f4-470d-9578-7749b2e5d8ab
+          required: true
+          description: The id of the card
+      requestBody:
+        description: Information about the transaction
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transaction'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '401':
+          description: Unauthorized
+        '402':
+          description: Payment Required (insufficient funds)
+        '403':
+          description: Forbidden (card disabled)
+        '404':
+          description: Not Found
+
+    get:
+      tags:
+        - Transactions
+      summary: Fetch all transactions from the card
+      operationId: fetchCardTransaction
+      parameters:
+        - in: path
+          name: cardId
+          schema:
+            type: string
+            example: 12d0797b-f3f4-470d-9578-7749b2e5d8ab
+          required: true
+          description: The id of the card
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+        '404':
+          description: Unauthorized
+
+  /organization/{orgId}:
+    get:
+      tags:
+        - Organization
+      summary: Get info about a specific organization
+      operationId: getorgdetails
+      parameters:
+        - in: path
+          name: orgId
+          schema:
+            type: string
+            example: c96910f2-b669-48b0-b3b1-c334f07f6f81
+          required: true
+          description: The id of the organization
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '404':
+          description: Not Found
+
+  /organization/{orgId}/statistics?from={from}&to={to}:
+    get:
+      tags:
+        - Organization
+      security:
+        - BearerAuth: []
+      summary: Get statistics about a specific organization
+      operationId: getorgstatistics
+      parameters:
+        - in: path
+          name: orgId
+          schema:
+            type: string
+            example: c96910f2-b669-48b0-b3b1-c334f07f6f81
+          required: true
+
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date
+            example: 2020-01-07
+            default: today
+          required: false
+          description: It can be safely interverted with the `to` parameter
+
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date
+            example: 2020-01-01
+            default: 7 days ago
+          required: false
+          description: It can be safely interverted with the `from` parameter
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statistics'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+
+  /admins/{adminId}/statistics?from={from}&to={to}:
+    get:
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      summary: Get statistics about a specific admin
+      operationId: getadminstatistics
+      parameters:
+        - in: path
+          name: adminId
+          schema:
+            type: string
+            example: c96910f2-b669-48b0-b3b1-c334f07f6f82
+          required: true
+
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date
+            example: 2020-01-07
+            default: today
+          required: false
+          description: It can be safely interverted with the `to` parameter
+
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date
+            example: 2020-01-01
+            default: 7 days ago
+          required: false
+          description: It can be safely interverted with the `from` parameter
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statistics'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+components:
+  schemas:
+
+    Login:
+      type: object
+      properties:
+        login:
+          $ref: "#/components/schemas/Admin/properties/login"
+        password:
+          $ref: "#/components/schemas/Admin/properties/password"
+
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM5NjkxMGYyLWI2NjktNDhiMC1iM2IxLWMZMzrmMDdmNmY4MiIsImlhdCI6MTc0MDA2MDg2NCwiZXhwIjoyMD51NDIwODY0fQ.iZA9-fjuQJTgQNgxwn1yPru3p-D4Mtqz64UqcHZl2T4
+        id:
+          $ref: "#/components/schemas/Admin/properties/id"
+        organization:
+          $ref: "#/components/schemas/Organization"
+
+    Card:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 12d0797b-f3f4-470d-9578-7749b2e5d8ab
+          readOnly: true
+        enabled:
+          type: boolean
+          example: true
+          readOnly: true
+        label:
+          type: string
+          example: "Jhon Doe"
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: b8b8be71-209e-480d-8000-bb9be822b5af
+          readOnly: true
+        date:
+          type: string
+          format: datetime
+          example: 2025-02-21T14:22:37.454Z
+          readOnly: true
+        amount:
+          type: number
+          multipleOf: 0.1
+          example: -10.50
+        type:
+          $ref: "#/components/schemas/TransactionType"
+        description:
+          type: string
+          example: "A moovie ticket for Star Wars"
+        card:
+          allOf:
+            - $ref: "#/components/schemas/Card"
+            - readOnly: true
+
+    TransactionType:
+      type: string
+      enum:
+        - PAYMENT
+        - DEPOSIT
+        - REFUND
+        - WITHDRAWAL
+        - SYSTEM
+      example: PAYMENT
+
+    Admin:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: c96910f2-b669-48b0-b3b1-c334f07f6f82
+          readOnly: true
+        login:
+          type: string
+          example: "admin@adiilpay.com"
+        password:
+          type: string
+          example: 'S3cur3P@ssword!'
+          writeOnly: true
+
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: c96910f2-b669-48b0-b3b1-c334f07f6f81
+          readOnly: true
+        name:
+          type: string
+          example: "Organisation"
+        primary_color:
+          type: string
+          format: hex-color
+          example: "#000000"
+
+        secondary_color:
+          type: string
+          format: hex-color
+          example: "#000000"
+
+        accent_color:
+          type: string
+          format: hex-color
+          example: "#000000"
+
+    Statistics:
+      type: array
+      items:
+        type: object
+        properties:
+          date:
+            type: string
+            format: date
+            example: 2025-02-21T00:00:00.000Z
+          payments:
+            type: number
+            example: 152.17
+          refunds:
+            type: number
+            example: 20.00
+          deposits:
+            type: number
+            example: 50.00
+          withdrawals:
+            type: number
+            example: 5.00
+          other:
+            type: number
+            example: 0.00
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
