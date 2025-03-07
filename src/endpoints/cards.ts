@@ -32,7 +32,7 @@ router.get('/cards/:cardid',
         }
     }));
 
-router.post('/user/:userid/cards', authenticate,
+router.post('/cards', authenticate,
     asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
 
         // On vérifie que l'utilisateur existe et qu'il appartient à l'organisation de l'admin
