@@ -201,7 +201,7 @@ paths:
         '404':
           description: Not Found
 
-  /organization/{orgId}/statistics?from={from}&to={to}:
+  /organization/{orgId}/statistics:
     get:
       tags:
         - Organization
@@ -250,7 +250,7 @@ paths:
           description: Not Found
 
 
-  /admins/{adminId}/statistics?from={from}&to={to}:
+  /admins/{adminId}/statistics:
     get:
       tags:
         - Admin
