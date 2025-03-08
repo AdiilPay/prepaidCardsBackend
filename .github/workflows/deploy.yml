@@ -66,10 +66,5 @@ jobs:
           ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << 'EOF'
           cd $REMOTE_DOCKER_COMPOSE_PATH
           docker-compose pull
-          docker-compose up -d \
-            -e DB_URL="${{ secrets.DB_URL }}" \
-            -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
-            -e PORT="${{ secrets.PORT }}" \
-            -e NO_TOKEN_EXPIRATION="${{ secrets.NO_TOKEN_EXPIRATION }}"
-            -e NODE_ENV="production"
+          docker-compose up -d 
           EOF
