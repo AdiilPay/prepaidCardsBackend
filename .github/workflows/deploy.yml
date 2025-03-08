@@ -38,9 +38,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-push
-    strategy:
-      matrix:
-        environment: [ prod ]
+    environment:
+      name: ${{ github.ref_name }}
 
     steps:
       - name: Checkout code
