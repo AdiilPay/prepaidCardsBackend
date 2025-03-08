@@ -20,6 +20,7 @@ jobs:
     permissions:
         contents: read
         packages: write
+    environment: ${{ inputs.environment }}
 
     steps:
       - name: Checkout code
@@ -37,6 +38,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build-and-push
+    environment: ${{ inputs.environment }}
 
     steps:
       - name: Checkout code
@@ -51,8 +53,8 @@ jobs:
         run: |
           echo "DB_URL=${{ secrets.DB_URL }}" > .env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "NO_TOKEN_EXPIRATION=${{ secrets.NO_TOKEN_EXPIRATION }}" >> .env
+          echo "PORT=${{ vars.PORT }}" >> .env
+          echo "NO_TOKEN_EXPIRATION=${{ vars.NO_TOKEN_EXPIRATION }}" >> .env
           echo "NODE_ENV=production" >> .env
 
       - name: Copy .env file to remote server
