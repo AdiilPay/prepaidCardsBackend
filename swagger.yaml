@@ -335,6 +335,11 @@ components:
         label:
           type: string
           example: "Jhon Doe"
+        balance:
+          type: number
+          multipleOf: 0.1
+          example: 57.28
+          readOnly: true
 
     Transaction:
       type: object
