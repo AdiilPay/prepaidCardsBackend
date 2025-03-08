@@ -66,7 +66,7 @@ jobs:
 
       - name: Deploy application on remote server
         run: |
-          ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << 'EOF'
+          ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << EOF
             cd $REMOTE_DOCKER_COMPOSE_PATH && \
             echo "Current directory:" && pwd && ls -al && \
             docker compose pull && \
