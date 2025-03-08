@@ -13,7 +13,7 @@ RUN npm install --legacy-peer-deps
 # Copie le reste du code source
 COPY . .
 
-# Expose le port de l'application (remplacez 3000 par le port utilisé par votre application)
-EXPOSE 3000
+# Définit les permissions pour le script entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
