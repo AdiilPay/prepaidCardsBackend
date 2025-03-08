@@ -1,5 +1,5 @@
 # Utilise une image de base Node.js avec une version LTS (Long Term Support)
-FROM node:16
+FROM node:22
 
 # Définit le répertoire de travail dans le conteneur
 WORKDIR /app
