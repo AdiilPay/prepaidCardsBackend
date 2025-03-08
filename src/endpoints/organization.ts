@@ -11,7 +11,7 @@ import prismaClient from "@prismaClient";
 
 import {organizationStatistics} from "@prisma/client/sql"
 
-import organizationStatisticBody from "@clientObjects/organizationStatistics";
+import organizationStatisticBody from "@zod/organizationStatistics";
 import {z} from "zod";
 
 import deepTransformDecimals from "@utils/deepTransformDecimals";

@@ -1,12 +1,10 @@
 import {Router, Request, Response} from 'express';
 import validate from "@utils/bodyValidation"
-import loginBody from "@clientObjects/login";
+import loginBody from "@zod/login";
 
 import createToken from "@utils/auth/createTokens";
 
 import {compare} from "@utils/auth/passwords";
-
-const router = Router();
 
 import prismaClient from "@prismaClient";
 import {z} from "zod";
@@ -14,6 +12,9 @@ import {z} from "zod";
 import AuthenticationError from "@errors/AuthenticationError";
 import asyncHandler from "@utils/asyncHandler";
 import {Admin, Organization} from "@prisma/client";
+
+
+const router = Router();
 
 type LoginForm = z.infer<typeof loginBody>;
 

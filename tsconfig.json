@@ -34,7 +34,7 @@
       "@utils/*": ["src/utils/*"],
       "@clientObjects/*": ["src/objects/client/*"],
       "@serverObjects/*": ["src/objects/server/*"],
-      "@dbObjects/*": ["src/objects/database/*"],
+      "@zod/*": ["src/zod/*"],
       "@errors/*": ["src/utils/errors/*"],
       "@prismaClient": ["src/utils/prismaClient"],
     },

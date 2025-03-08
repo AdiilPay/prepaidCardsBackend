@@ -1,6 +1,6 @@
 import authenticate from "@utils/auth/authenticate";
 import validate from "@utils/bodyValidation";
-import organizationStatisticBody from "@clientObjects/organizationStatistics";
+import organizationStatisticBody from "@zod/organizationStatistics";
 import asyncHandler from "@utils/asyncHandler";
 import {AuthenticatedRequest} from "@utils/auth/AuthenticatedRequest";
 import {Response} from "express";

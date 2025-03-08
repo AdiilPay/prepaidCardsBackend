@@ -9,7 +9,7 @@ import NotFoundError from '@errors/NotFoundError';
 import authenticate from "@utils/auth/authenticate";
 import {AuthenticatedRequest} from "@utils/auth/AuthenticatedRequest";
 import validate from "@utils/bodyValidation";
-import cardBody from "@clientObjects/card";
+import cardBody from "@zod/card";
 import {z} from "zod";
 
 const router = Router();

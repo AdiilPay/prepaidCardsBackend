@@ -1,10 +1,8 @@
 import {Router, Response} from 'express';
 import validate from "@utils/bodyValidation"
-import transactionBody from "@clientObjects/transaction";
+import transactionBody from "@zod/transaction";
 
 import NotFoundError from '@errors/NotFoundError';
-
-const router = Router();
 
 import prismaClient from "@prismaClient";
 import {z} from "zod";
@@ -16,6 +14,8 @@ import InsufficientBalanceError from "@errors/insufficientBalanceError";
 import DisabledCardUseError from "@errors/DisabledCardUseError";
 import deepTransformDecimals from "@utils/deepTransformDecimals";
 import UnprocessableError from "@errors/UnprocessableError";
+
+const router = Router();
 
 type TransactionForm = z.infer<typeof transactionBody>;
 
