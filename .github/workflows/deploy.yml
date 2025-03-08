@@ -3,7 +3,7 @@ name: Deploy Docker Application
 on:
   push:
     branches:
-      - main
+      - master
 
 env:
   IMAGE_NAME: ghcr.io/AdiilPay/prepaidCardsBackend:latest
