@@ -1,6 +1,6 @@
 import authenticate from "@utils/auth/authenticate";
 import validate from "@utils/bodyValidation";
-import organizationStatisticBody from "@clientObjects/organizationStatistics";
+import organizationStatisticBody from "@zod/organizationStatistics";
 import asyncHandler from "@utils/asyncHandler";
 import {AuthenticatedRequest} from "@utils/auth/AuthenticatedRequest";
 import {Response} from "express";
@@ -35,12 +35,12 @@ router.get('/admins', authenticate,
         const admins = await prismaClient.admin.findMany({
             where: {
                 organizationId: req.admin!.organizationId
+            },
+
+            omit: {
+                password: true
             }
         });
-
-        // On met l'admin actuel en première position
-        admins.splice(admins.indexOf(req.admin!), 1);
-        admins.unshift(req.admin!);
 
         res.status(200);
         res.json(admins);

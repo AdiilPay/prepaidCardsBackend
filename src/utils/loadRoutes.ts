@@ -1,7 +1,7 @@
 import {readdirSync} from 'fs';
 import {join} from 'path';
 import express, {Express} from "express";
-import errorHandler from "@utils/errorHandler";
+
 import NotFoundError from "@errors/NotFoundError";
 
 export default (app: Express) => {
