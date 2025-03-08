@@ -12,7 +12,7 @@ env:
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   REMOTE_USER: ${{ secrets.SSH_USERNAME }}
   REMOTE_HOST: ${{ secrets.SSH_HOST }}
-  REMOTE_DOCKER_COMPOSE_PATH: ~/api
+  REMOTE_DOCKER_COMPOSE_PATH: ${{ vars.REMOTE_DOCKER_COMPOSE_PATH }}
 
 jobs:
   build-and-push:

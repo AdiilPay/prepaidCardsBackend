@@ -9,7 +9,7 @@ services:
       - NO_TOKEN_EXPIRATION
       - NODE_ENV
     ports:
-      - "3000:3000"
+      - "${PORT:-20005}:${PORT:-20005}"
     env_file:
       - .env
     restart: always
