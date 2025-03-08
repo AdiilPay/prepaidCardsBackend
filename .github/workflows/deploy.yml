@@ -47,6 +47,17 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: Create .env file with GitHub secrets
+        run: |
+          echo "DB_URL=${{ secrets.DB_URL }}" > .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          echo "NO_TOKEN_EXPIRATION=${{ secrets.NO_TOKEN_EXPIRATION }}" >> .env
+          echo "NODE_ENV=production" >> .env
+
+      - name: Copy .env file to remote server
+        run: scp -o StrictHostKeyChecking=no .env $REMOTE_USER@$REMOTE_HOST:$REMOTE_DOCKER_COMPOSE_PATH/.env
+
       - name: Copy docker-compose.yml to remote server
         run: scp -o StrictHostKeyChecking=no docker-compose.yml $REMOTE_USER@$REMOTE_HOST:$REMOTE_DOCKER_COMPOSE_PATH
 
