@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: ghcr.io/AdiilPay/prepaidCardsBackend:latest
+    image: ghcr.io/adiilpay/prepaidcardsbackend:latest
     container_name: AdiilPayAPI
     environment:
       - DB_URL
