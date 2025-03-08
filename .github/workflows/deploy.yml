@@ -68,7 +68,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << 'EOF'
             cd $REMOTE_DOCKER_COMPOSE_PATH && \
-            echo $(pwd) | tail -c 10 && \
+            echo "Current directory:" && pwd && ls -al && \
             docker compose pull && \
             docker compose up -d echo 
           EOF
