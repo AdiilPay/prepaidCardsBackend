@@ -44,7 +44,7 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Copy docker-compose.yml to remote server
-        run: scp -o StrictHostKeyChecking=no docker-compose.yml $REMOTE_USER@$REMOTE_HOST:$REMOTE_DOCKER_COMPOSE_PATH/docker-compose.yml
+        run: scp docker-compose.yml $REMOTE_USER@$REMOTE_HOST:$REMOTE_DOCKER_COMPOSE_PATH
 
       - name: Deploy application on remote server
         run: |
