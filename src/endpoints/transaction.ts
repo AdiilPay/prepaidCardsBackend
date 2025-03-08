@@ -12,7 +12,6 @@ import {z} from "zod";
 import {AuthenticatedRequest} from "@utils/auth/AuthenticatedRequest";
 import authenticate from "@utils/auth/authenticate";
 import asyncHandler from "@utils/asyncHandler";
-import {Card, User} from "@prisma/client";
 import InsufficientBalanceError from "@errors/insufficientBalanceError";
 import DisabledCardUseError from "@errors/DisabledCardUseError";
 import deepTransformDecimals from "@utils/deepTransformDecimals";
@@ -77,7 +76,6 @@ router.post('/card/:cardid/transaction', authenticate, validate(transactionBody)
             })
             ]
         )
-
         res.status(201)
         // On ne récupère que la transaction qui nous intéresse
         res.json(data[1]);
