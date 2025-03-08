@@ -67,8 +67,7 @@ jobs:
       - name: Deploy application on remote server
         run: |
           ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << 'EOF'
-          cd $REMOTE_DOCKER_COMPOSE_PATH
-          echo $(pwd) | tail -c 10
-          docker compose pull
-          docker compose up -d 
+            cd $REMOTE_DOCKER_COMPOSE_PATH && \
+            docker compose pull && \
+            docker compose up -d 
           EOF
