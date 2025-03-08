@@ -35,12 +35,12 @@ router.get('/admins', authenticate,
         const admins = await prismaClient.admin.findMany({
             where: {
                 organizationId: req.admin!.organizationId
+            },
+
+            omit: {
+                password: true
             }
         });
-
-        // On met l'admin actuel en première position
-        admins.splice(admins.indexOf(req.admin!), 1);
-        admins.unshift(req.admin!);
 
         res.status(200);
         res.json(admins);
