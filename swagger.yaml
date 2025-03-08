@@ -250,6 +250,26 @@ paths:
           description: Not Found
 
 
+  /admins:
+    get:
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      summary: Get all admins
+      operationId: getalladmins
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Admin'
+        '401':
+          description: Unauthorized
+
   /admins/{adminId}/statistics:
     get:
       tags:
