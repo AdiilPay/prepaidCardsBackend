@@ -52,8 +52,6 @@ jobs:
 
       - name: Create .env file with GitHub secrets
         run: |
-          echo "${{ inputs.environment }}"
-          echo "${{ vars.NO_TOKEN_EXPIRATION }}"
           echo "DB_URL=${{ secrets.DB_URL }}" > .env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
           echo "PORT=${{ vars.PORT }}" >> .env
@@ -68,8 +66,7 @@ jobs:
 
       - name: Deploy application on remote server
         run: |
-          ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << 'EOF'
-          cd $REMOTE_DOCKER_COMPOSE_PATH
+          ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST:$REMOTE_DOCKER_COMPOSE_PATH << 'EOF'
           docker-compose pull
           docker-compose up -d 
           EOF
