@@ -83,7 +83,7 @@ router.delete('/cards/:cardid', authenticate,
         res.status(204).json({});
     }));
 
-// Supression d'une carte
+// Suppression d'une carte
 router.delete('/cards/:cardid/nuke', authenticate,
     asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
         const cardId = req.params.cardid;
