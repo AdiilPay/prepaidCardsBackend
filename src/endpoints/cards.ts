@@ -37,6 +37,20 @@ router.get('/cards/:cardid',
         }
     }));
 
+
+router.get('/cards', authenticate,
+    asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+
+        const result = await PrismaClient.card.findMany({
+            where: {
+                organizationId: req.admin!.organizationId,
+                enabled: true
+            }
+        });
+
+        res.status(200).json(result);
+    }));
+
 router.post('/cards', authenticate, validate(cardBody),
     asyncHandler(async (req: AuthenticatedRequest<CardForm>, res: Response) => {
 
@@ -66,7 +80,23 @@ router.delete('/cards/:cardid', authenticate,
             }
         });
 
-        res.status(204).json(result);
+        res.status(204).send();
     }));
+
+// Suppression d'une carte
+router.delete('/cards/:cardid/nuke', authenticate,
+    asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+        const cardId = req.params.cardid;
+
+        await PrismaClient.card.delete({
+            where: {
+                id: cardId,
+                organizationId: req.admin!.organizationId
+            }
+        });
+
+        res.status(204).send();
+    }));
+
 
 export default router;
