@@ -95,7 +95,7 @@ router.delete('/cards/:cardid/nuke', authenticate,
             }
         });
 
-        res.status(204).json({});
+        res.status(204).send();
     }));
 
 
