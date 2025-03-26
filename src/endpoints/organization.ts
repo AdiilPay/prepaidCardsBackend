@@ -54,9 +54,7 @@ router.get('/organization/:orgId', asyncHandler(async (req, res) => {
 
         res.status(200);
         res.json(organization);
-
     }
-
 ));
 
 export default router;
