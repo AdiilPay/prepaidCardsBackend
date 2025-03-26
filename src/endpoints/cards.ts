@@ -80,7 +80,7 @@ router.delete('/cards/:cardid', authenticate,
             }
         });
 
-        res.status(204).json({});
+        res.status(204).send();
     }));
 
 // Suppression d'une carte
