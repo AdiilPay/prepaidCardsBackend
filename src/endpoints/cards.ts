@@ -51,6 +51,19 @@ router.get('/cards', authenticate,
         res.status(200).json(result);
     }));
 
+router.get('/cards/deleted', authenticate,
+    asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+
+        const result = await PrismaClient.card.findMany({
+            where: {
+                organizationId: req.admin!.organizationId,
+                enabled: false
+            }
+        });
+
+        res.status(200).json(result);
+    }));
+
 router.post('/cards', authenticate, validate(cardBody),
     asyncHandler(async (req: AuthenticatedRequest<CardForm>, res: Response) => {
 
