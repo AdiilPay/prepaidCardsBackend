@@ -50,7 +50,7 @@ model Transaction {
   cardId      String          @db.Char(36)
   adminId     String          @db.Char(36)
   admin       Admin?          @relation(fields: [adminId], references: [id])
-  card        Card?           @relation(fields: [cardId], references: [id])
+  card        Card?           @relation(fields: [cardId], references: [id], onDelete: Cascade)
 
   @@index([adminId], map: "Transaction_adminId_fkey")
   @@index([cardId], map: "Transaction_cardId_fkey")
