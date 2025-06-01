@@ -19,7 +19,7 @@ const router = Router();
 
 type TransactionForm = z.infer<typeof transactionBody>;
 
-router.post('/card/:cardid/transaction', authenticate, validate(transactionBody),
+router.post('/card/:cardid/transactions', authenticate, validate(transactionBody),
     asyncHandler(async (req: AuthenticatedRequest<TransactionForm>, res: Response) => {
 
         const card = await prismaClient.card.findUnique({

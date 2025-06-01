@@ -5,6 +5,8 @@ import DatabaseCommunicationError from "@errors/DatabaseCommunicationError";
 
 export default function (error: any, req: any, res: any, next: () => void) {
 
+    console.log(`Error: ${error.message}`);
+
     // Permets de gérer les erreurs de type Prisma
     // On les convertit en erreurs plus explicites si possible
     // Sinon on les considère comme des erreurs de DB

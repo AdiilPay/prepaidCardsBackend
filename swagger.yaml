@@ -36,8 +36,26 @@ paths:
         '401':
           description: Unauthorized
 
-
   /cards:
+    get:
+      tags:
+        - Cards
+      security:
+        - BearerAuth: []
+      summary: Fetch cards
+      operationId: getcard
+
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Card'
+        '401':
+          description: Unauthorized
     post:
       tags:
         - Cards
@@ -60,6 +78,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Card'
+        '401':
+          description: Unauthorized
+
+  /cards/deleted:
+    get:
+      tags:
+        - Cards
+      security:
+        - BearerAuth: []
+      summary: Fetch deleted cards
+      operationId: getdelcard
+
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Card'
         '401':
           description: Unauthorized
 
@@ -112,7 +151,7 @@ paths:
         '404':
           description: Not Found
 
-  /cards/{cardId}/transaction:
+  /cards/{cardId}/transactions:
     post:
       tags:
         - Transactions
@@ -176,7 +215,7 @@ paths:
         '404':
           description: Unauthorized
 
-  /organization/{orgId}:
+  /organizations/{orgId}:
     get:
       tags:
         - Organization
@@ -200,8 +239,39 @@ paths:
                 $ref: '#/components/schemas/Organization'
         '404':
           description: Not Found
+    put:
+      tags:
+        - Organization
+      summary: update organization details
+      operationId: putorganization
+      parameters:
+        - in: path
+          name: orgId
+          schema:
+            type: string
+            example: c96910f2-b669-48b0-b3b1-c334f07f6f81
+          required: true
+          description: The id of the organization
+      requestBody:
+        description: Information about the transaction
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '404':
+          description: Not Found
 
-  /organization/{orgId}/statistics:
+
+
+  /organizations/{orgId}/statistics:
     get:
       tags:
         - Organization
@@ -264,9 +334,9 @@ paths:
           content:
             application/json:
               schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Admin'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Admin'
         '401':
           description: Unauthorized
 
