@@ -15,7 +15,7 @@ import {Statistics} from "@utils/stats/StatisticsObject";
 
 type OrganizationStatisticsForm = z.infer<typeof organizationStatisticBody>;
 
-router.get('/admin/adminId/statistics', authenticate, validate(organizationStatisticBody),
+router.get('/admin/:adminId/statistics', authenticate, validate(organizationStatisticBody),
     asyncHandler(async (req: AuthenticatedRequest<OrganizationStatisticsForm>, res: Response) => {
 
         const from = req.body.from;
