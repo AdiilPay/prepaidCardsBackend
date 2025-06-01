@@ -25,7 +25,7 @@ type OrganizationStatisticsForm = z.infer<typeof organizationStatisticBody>;
 
 
 
-router.get('/transactions/statistics', authenticate, validate(organizationStatisticBody),
+router.get('/organizations/:orgId/statistics', authenticate, validate(organizationStatisticBody),
     asyncHandler(async (req: AuthenticatedRequest<OrganizationStatisticsForm>, res: Response) => {
 
         const from = req.body.from;
@@ -40,7 +40,7 @@ router.get('/transactions/statistics', authenticate, validate(organizationStatis
     }));
 
 
-router.get('/organization/:orgId', asyncHandler(async (req, res) => {
+router.get('/organizations/:orgId', asyncHandler(async (req, res) => {
 
         const organization = await prismaClient.organization.findUnique({
             where: {
