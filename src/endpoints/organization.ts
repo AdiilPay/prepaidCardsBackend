@@ -19,14 +19,20 @@ import fillMissingDates from "@utils/stats/fillMissingDates";
 import {Statistics} from "@utils/stats/StatisticsObject";
 
 import NotFoundError from "@errors/NotFoundError"
+import organization from "@zod/organization";
 
 
 type OrganizationStatisticsForm = z.infer<typeof organizationStatisticBody>;
+type OrganizationSettings = z.infer<typeof  organization>
 
 
 
 router.get('/organizations/:orgId/statistics', authenticate, validate(organizationStatisticBody),
     asyncHandler(async (req: AuthenticatedRequest<OrganizationStatisticsForm>, res: Response) => {
+
+        if (req.admin!.organizationId !== req.params.orgId) {
+            throw new NotFoundError();
+        }
 
         const from = req.body.from;
         const to = req.body.to;
@@ -56,5 +62,30 @@ router.get('/organizations/:orgId', asyncHandler(async (req, res) => {
         res.json(organization);
     }
 ));
+
+
+router.put('/organizations/:orgId', authenticate, validate(organizationStatisticBody),
+    asyncHandler(async (req: AuthenticatedRequest<OrganizationSettings>, res) => {
+
+        if (req.admin!.organizationId !== req.params.orgId) {
+            throw new NotFoundError();
+        }
+
+        const organization = await prismaClient.organization.update({
+            where: {
+                id: req.params.orgId
+            },
+            data: {
+                name: req.body.name,
+                primary_color: req.body.primary_color,
+                secondary_color: req.body.secondary_color,
+                accent_color: req.body.accent_color,
+            }
+        });
+
+        res.status(200);
+        res.json(organization);
+    })
+)
 
 export default router;
